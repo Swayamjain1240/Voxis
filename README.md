@@ -1,3 +1,4 @@
+
 # 🖤 VOXIS — AI-Powered Sign Language Communication
 
 > **From silence to speech. From speech to sign.**
@@ -289,8 +290,9 @@ A **6-digit room code or QR code** can be used to connect the two users.
 
 # 🛠️ Tech Stack
 
+
 | Layer                   | Technology                                  |
-| ----------------------- | ------------------------------------------- |
+| ------------------------- | --------------------------------------------- |
 | Frontend                | React + Vite                                |
 | Styling                 | Tailwind CSS                                |
 | Computer Vision         | MediaPipe Holistic                          |
@@ -474,8 +476,9 @@ The main interface contains two communication sides.
 
 VOXIS includes fallback mechanisms for unreliable AI or environmental conditions.
 
+
 | Problem             | VOXIS Response                         |
-| ------------------- | -------------------------------------- |
+| --------------------- | ---------------------------------------- |
 | Hands not detected  | Ask user to show hands                 |
 | Poor lighting       | Lighting/framing guidance              |
 | Sign not recognized | Ask user to sign again                 |
@@ -549,33 +552,33 @@ CLEAR SESSION
 
 The primary hackathon MVP focuses on:
 
-* [x] Real-time camera input
-* [x] MediaPipe landmark detection
-* [x] Sign recognition
-* [x] Gloss generation
-* [x] LLM sentence generation
-* [x] Text-to-speech
-* [x] Speech-to-text
-* [x] Speech-to-sign conversion
-* [x] 3D signing avatar
-* [x] Captions
-* [x] Conversation transcript
-* [x] Face-to-face mode
-* [x] Session clearing
+* [X]  Real-time camera input
+* [X]  MediaPipe landmark detection
+* [X]  Sign recognition
+* [X]  Gloss generation
+* [X]  LLM sentence generation
+* [X]  Text-to-speech
+* [X]  Speech-to-text
+* [X]  Speech-to-sign conversion
+* [X]  3D signing avatar
+* [X]  Captions
+* [X]  Conversation transcript
+* [X]  Face-to-face mode
+* [X]  Session clearing
 
 ### Future Scope
 
-* [ ] Remote room-code communication
-* [ ] QR-based room joining
-* [ ] Hindi + English expansion
-* [ ] Fingerspelling
-* [ ] Facial-expression recognition
-* [ ] Offline/on-device mode
-* [ ] Mobile PWA
-* [ ] User accounts
-* [ ] Friends/contacts
-* [ ] Larger ISL vocabulary
-* [ ] Continuous free-form ISL translation
+* [ ]  Remote room-code communication
+* [ ]  QR-based room joining
+* [ ]  Hindi + English expansion
+* [ ]  Fingerspelling
+* [ ]  Facial-expression recognition
+* [ ]  Offline/on-device mode
+* [ ]  Mobile PWA
+* [ ]  User accounts
+* [ ]  Friends/contacts
+* [ ]  Larger ISL vocabulary
+* [ ]  Continuous free-form ISL translation
 
 ---
 
@@ -635,8 +638,9 @@ rather than attempting to solve unrestricted sign-language translation immediate
 
 A suggested four-person team structure:
 
+
 | Role               | Responsibility                                     |
-| ------------------ | -------------------------------------------------- |
+| -------------------- | ---------------------------------------------------- |
 | ML Engineer        | Dataset, landmark extraction, model training, ONNX |
 | Backend Engineer   | FastAPI, WebSockets, Whisper, LLM, TTS             |
 | Frontend Engineer  | React UI, camera, MediaPipe, captions              |
