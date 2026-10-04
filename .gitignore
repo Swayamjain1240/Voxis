@@ -1,0 +1,52 @@
+﻿# ============================================================
+# VOXIS Root Gitignore
+# ============================================================
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Node
+node_modules/
+dist/
+build/
+.vite/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+
+# Temporary
+tmp/
+temp/
+
+# ML / large files
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.bin
+
+# Large archives
+*.zip
+*.tar
+*.tar.gz

@@ -1,0 +1,43 @@
+﻿{
+  "version": "1.0.0",
+  "contexts": {
+    "hospital": {
+      "description": "Hospital, clinic and medical conversation.",
+      "allowed_glosses": [
+        "DOCTOR",
+        "PATIENT",
+        "MEDICINE",
+        "SICK",
+        "YESTERDAY",
+        "YES",
+        "NO",
+        "WHERE",
+        "HELP",
+        "PAIN"
+      ]
+    },
+    "bank": {
+      "description": "Banking and financial conversation.",
+      "allowed_glosses": [
+        "YESTERDAY",
+        "BANK",
+        "MONEY",
+        "YES",
+        "NO",
+        "WHERE",
+        "HELP"
+      ]
+    },
+    "office": {
+      "description": "General office and workplace conversation.",
+      "allowed_glosses": [
+        "YESTERDAY",
+        "YES",
+        "NO",
+        "WHERE",
+        "HELP"
+      ]
+    }
+  },
+  "default_context": "hospital"
+}

@@ -1,0 +1,57 @@
+﻿# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ML artifacts
+artifacts/checkpoints/*
+artifacts/onnx/*
+artifacts/reports/*
+
+# Large datasets
+data/
+datasets/
+*.zip
+*.tar
+*.tar.gz
+
+# Model files
+*.pt
+*.pth
+*.ckpt
+*.onnx
+*.bin
+
+# Logs
+*.log
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/

@@ -1,0 +1,81 @@
+﻿{
+  "version": "1.0.0",
+  "language": "ISL",
+  "mode": "restricted-mvp",
+  "gloss_format": "UPPERCASE",
+  "description": "Frozen shared MVP vocabulary for VOXIS two-way communication.",
+  "items": [
+    {
+      "id": "doctor",
+      "gloss": "DOCTOR",
+      "text": "doctor",
+      "contexts": ["hospital"]
+    },
+    {
+      "id": "patient",
+      "gloss": "PATIENT",
+      "text": "patient",
+      "contexts": ["hospital"]
+    },
+    {
+      "id": "medicine",
+      "gloss": "MEDICINE",
+      "text": "medicine",
+      "contexts": ["hospital"]
+    },
+    {
+      "id": "sick",
+      "gloss": "SICK",
+      "text": "sick",
+      "contexts": ["hospital"]
+    },
+    {
+      "id": "yesterday",
+      "gloss": "YESTERDAY",
+      "text": "yesterday",
+      "contexts": ["hospital", "bank", "office"]
+    },
+    {
+      "id": "bank",
+      "gloss": "BANK",
+      "text": "bank",
+      "contexts": ["bank"]
+    },
+    {
+      "id": "money",
+      "gloss": "MONEY",
+      "text": "money",
+      "contexts": ["bank"]
+    },
+    {
+      "id": "yes",
+      "gloss": "YES",
+      "text": "yes",
+      "contexts": ["hospital", "bank", "office"]
+    },
+    {
+      "id": "no",
+      "gloss": "NO",
+      "text": "no",
+      "contexts": ["hospital", "bank", "office"]
+    },
+    {
+      "id": "where",
+      "gloss": "WHERE",
+      "text": "where",
+      "contexts": ["hospital", "bank", "office"]
+    },
+    {
+      "id": "help",
+      "gloss": "HELP",
+      "text": "help",
+      "contexts": ["hospital", "bank", "office"]
+    },
+    {
+      "id": "pain",
+      "gloss": "PAIN",
+      "text": "pain",
+      "contexts": ["hospital"]
+    }
+  ]
+}

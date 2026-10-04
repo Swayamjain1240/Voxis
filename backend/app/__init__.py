@@ -1,0 +1,1 @@
+"""VOXIS backend application package."""

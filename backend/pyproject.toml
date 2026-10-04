@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "voxis-backend"
+version = "0.1.0"
+description = "VOXIS / SilentSign FastAPI backend"
+requires-python = ">=3.10"
+dependencies = [
+    "fastapi==0.116.2",
+    "uvicorn[standard]==0.35.0",
+    "python-multipart==0.0.20",
+    "pydantic==2.11.9",
+    "httpx==0.28.1"
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.setuptools.packages.find]
+include = ["app*"]

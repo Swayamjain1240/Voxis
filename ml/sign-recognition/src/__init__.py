@@ -1,0 +1,1 @@
+"""VOXIS Sign Recognition package."""

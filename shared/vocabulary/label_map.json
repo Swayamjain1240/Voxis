@@ -1,0 +1,32 @@
+﻿{
+  "version": "1.0.0",
+  "labels": {
+    "0": "DOCTOR",
+    "1": "PATIENT",
+    "2": "MEDICINE",
+    "3": "SICK",
+    "4": "YESTERDAY",
+    "5": "BANK",
+    "6": "MONEY",
+    "7": "YES",
+    "8": "NO",
+    "9": "WHERE",
+    "10": "HELP",
+    "11": "PAIN"
+  },
+  "gloss_to_label": {
+    "DOCTOR": 0,
+    "PATIENT": 1,
+    "MEDICINE": 2,
+    "SICK": 3,
+    "YESTERDAY": 4,
+    "BANK": 5,
+    "MONEY": 6,
+    "YES": 7,
+    "NO": 8,
+    "WHERE": 9,
+    "HELP": 10,
+    "PAIN": 11
+  },
+  "unknown_label": -1
+}
