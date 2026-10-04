@@ -1,0 +1,1 @@
+"""VOXIS sign recognition tests."""

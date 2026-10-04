@@ -1,0 +1,9 @@
+numpy>=1.26
+opencv-python>=4.10
+mediapipe>=0.10
+torch>=2.4
+PyYAML>=6.0
+scikit-learn>=1.5
+onnx>=1.16
+onnxruntime>=1.19
+pytest>=8.0

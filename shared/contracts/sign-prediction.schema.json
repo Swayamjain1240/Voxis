@@ -1,0 +1,55 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://voxis.local/contracts/sign-prediction.schema.json",
+  "title": "VOXIS Sign Prediction",
+  "description": "Contract produced by the Sign Recognition pipeline.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "schema_version",
+    "prediction"
+  ],
+  "properties": {
+    "type": {
+      "const": "sign_prediction"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "prediction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "label",
+        "gloss",
+        "confidence",
+        "stable"
+      ],
+      "properties": {
+        "label": {
+          "type": "integer",
+          "minimum": -1
+        },
+        "gloss": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "stable": {
+          "type": "boolean"
+        }
+      }
+    },
+    "sequence_id": {
+      "type": "string"
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

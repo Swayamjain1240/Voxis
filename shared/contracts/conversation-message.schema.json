@@ -1,0 +1,74 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://voxis.local/contracts/conversation-message.schema.json",
+  "title": "VOXIS Conversation Message",
+  "description": "Shared message contract used by both Speech-to-Sign and Sign-to-Speech pipelines.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "message_id",
+    "sender",
+    "source",
+    "modality",
+    "timestamp"
+  ],
+  "properties": {
+    "message_id": {
+      "type": "string"
+    },
+    "room_id": {
+      "type": ["string", "null"]
+    },
+    "sender": {
+      "type": "string",
+      "enum": [
+        "user",
+        "system",
+        "rishi_pipeline",
+        "swayam_pipeline"
+      ]
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "speech",
+        "sign",
+        "text",
+        "system"
+      ]
+    },
+    "modality": {
+      "type": "string",
+      "enum": [
+        "speech",
+        "sign",
+        "text",
+        "avatar"
+      ]
+    },
+    "text": {
+      "type": ["string", "null"]
+    },
+    "glosses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+    "sequence_id": {
+      "type": ["string", "null"]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "metadata": {
+      "type": "object"
+    }
+  }
+}

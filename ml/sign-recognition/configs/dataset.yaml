@@ -1,0 +1,32 @@
+dataset:
+  name: VOXIS_SIGN_RECOGNITION
+  root: ../../data/raw
+  manifest: ../../data/manifests/dataset_registry.csv
+  processed_root: ../../data/processed/sign-recognition
+
+landmarks:
+  left_hand_points: 21
+  right_hand_points: 21
+  pose_points: 33
+
+  coordinates:
+    - x
+    - y
+    - z
+    - visibility
+
+  total_points: 75
+  features_per_point: 4
+  total_features: 300
+
+sequence:
+  length: 60
+  padding: repeat_last
+  sampling: linear
+
+split:
+  strategy: signer_wise
+  train_ratio: 0.70
+  validation_ratio: 0.15
+  test_ratio: 0.15
+  held_out_signer: true

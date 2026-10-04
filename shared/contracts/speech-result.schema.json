@@ -1,0 +1,51 @@
+﻿{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://voxis.local/contracts/speech-result.schema.json",
+  "title": "VOXIS Speech Result",
+  "description": "Contract produced by the Speech Recognition pipeline.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "type",
+    "schema_version",
+    "transcript",
+    "language"
+  ],
+  "properties": {
+    "type": {
+      "const": "speech_result"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "transcript": {
+      "type": "string"
+    },
+    "language": {
+      "type": "string"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "glosses": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "source": {
+      "type": "string",
+      "enum": [
+        "microphone",
+        "audio_file",
+        "api"
+      ]
+    },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}

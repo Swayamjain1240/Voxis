@@ -1,0 +1,31 @@
+training:
+  seed: 42
+  epochs: 50
+  batch_size: 32
+  learning_rate: 0.0003
+  weight_decay: 0.0001
+  gradient_clip_norm: 1.0
+
+optimizer:
+  name: AdamW
+
+scheduler:
+  name: cosine
+  warmup_epochs: 3
+
+loss:
+  label_smoothing: 0.05
+
+early_stopping:
+  enabled: true
+  patience: 8
+  monitor: validation_accuracy
+
+checkpoint:
+  directory: artifacts/checkpoints
+  save_best_only: true
+
+evaluation:
+  confidence_threshold: 0.60
+  unknown_threshold: 0.60
+  top_k: 3
