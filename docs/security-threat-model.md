@@ -26,9 +26,10 @@ they are not renumbered into a replacement checklist.
   1 foundation; it must not be presented as available.
 
 The current verified checks are recorded in `docs/part-1.md` and the current
-REST wire behavior in `docs/api/current-contract.md`. No browser E2E, responsive
-viewport review, production deployment, penetration test, or application build
-is claimed by this document.
+REST wire behavior in `docs/api/current-contract.md`. The frontend build has
+completed locally, but no browser E2E, responsive viewport review, production
+deployment, penetration test, or remotely executed CI run is claimed by this
+document.
 
 ## Assets and trust boundaries
 
@@ -79,7 +80,7 @@ is claimed by this document.
 
 | Original numbering | Original controls retained | Status | Evidence and next step |
 | --- | --- | --- | --- |
-| 20 | Coherent test, diff, commit, and push checkpoints | **Implemented (source + checked)** | Each completed foundation checkpoint was tested, diff-checked, committed, and pushed to `Swayam`; latest verified remote commit is `11a90b2`. Continue this for the upload/docs cleanup. |
+| 20 | Coherent test, diff, commit, and push checkpoints | **Implemented (source + checked)** | Each completed foundation checkpoint was tested, diff-checked, committed, and pushed to `Swayam`; latest verified remote commit is `0da8a7c`. |
 | 21 | Continuous security | **Implemented (source)** | `.github/workflows/ci.yml` runs tests, dependency audits, tracked-file hygiene, and a reachable-history common-pattern scan; production monitoring/release review remain future work. |
 | 22 | External API disclosure | **Implemented (source/docs)** | No AI/provider API was introduced; prior development dependency disclosures are recorded in the task evidence. Re-disclose before any provider is added. |
 | 23 | Test every feature | **Partial** | Backend contract/security tests and frontend adapter tests exist; camera, browser capture, responsive screens, and future models still need their own tests. |

@@ -108,7 +108,7 @@ Mode 1 retains a tested disabled transport boundary.
 
 ## Final Duck review — Fixing Part 1
 
-**Verdict: DUCK PASS WITH GAPS** at `87ad831`.
+**Verdict: DUCK PASS WITH GAPS** at `0da8a7c`.
 
 The product direction remains on track: VOXIS is described as an assistive,
 restricted-vocabulary Indian Sign Language communication prototype; the original
