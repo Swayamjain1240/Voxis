@@ -1,10 +1,10 @@
-# SilentSign — Dataset Sources
+# VOXIS — Dataset Sources
 
 ## 1. Purpose
 
-This document records every dataset currently considered for SilentSign, what role it plays, which signs were verified, and how it should be used.
+This document records every dataset currently considered for VOXIS, what role it plays, which signs were verified, and how it should be used.
 
-The project uses a **multi-source dataset strategy** because no single verified dataset currently covers the complete SilentSign vocabulary.
+The project uses a **multi-source dataset strategy** because no single verified dataset currently covers the complete VOXIS vocabulary.
 
 ---
 
@@ -16,7 +16,7 @@ The project uses a **multi-source dataset strategy** because no single verified 
 | DS-02 | ISL500 / ISL-DATA | Secondary source, especially PAIN | VERIFIED FOR PAIN |
 | DS-03 | `vidit031/isl-isolated-40words` | Secondary source for YES/NO/WHERE/HELP | PARTIALLY VERIFIED |
 | DS-04 | Emergency ISL Gesture Dataset (Rishi / VOXIS) | Supplementary source for PAIN/DOCTOR/HELP and emergency vocabulary | AUDITED |
-| DS-05 | Custom SilentSign recordings | Fill missing vocabulary later | NOT STARTED |
+| DS-05 | Custom VOXIS recordings | Fill missing vocabulary later | NOT STARTED |
 
 ---
 
@@ -32,7 +32,7 @@ The project uses a **multi-source dataset strategy** because no single verified 
 
 ### Local project role
 
-INCLUDE is currently the main SilentSign source for the first recognition vocabulary.
+INCLUDE is currently the main VOXIS source for the first recognition vocabulary.
 
 ### Metadata audit performed
 
@@ -52,7 +52,7 @@ TOTAL ROWS: 5250
 MISMATCHES: 49
 ```
 
-Therefore SilentSign must **not** trust metadata blindly.
+Therefore VOXIS must **not** trust metadata blindly.
 
 A clean manifest was created:
 
@@ -101,7 +101,7 @@ Seasons/64. Fall/MVI_5000.MOV
 
 ### Technical validation
 
-A real DOCTOR video was successfully processed through the SilentSign MediaPipe pipeline:
+A real DOCTOR video was successfully processed through the VOXIS MediaPipe pipeline:
 
 ```text
 Source: MVI_5325.MOV
@@ -120,7 +120,7 @@ OpenCV
    ↓
 MediaPipe
    ↓
-SilentSign landmark JSON
+VOXIS landmark JSON
 ```
 
 ---
@@ -135,7 +135,7 @@ Hugging Face dataset repository:
 ISL500/ISL-DATA
 ```
 
-### Current SilentSign purpose
+### Current VOXIS purpose
 
 Used primarily to strengthen classes missing or weak in INCLUDE.
 
@@ -165,7 +165,7 @@ Videos/User003/Pain__session16__clip012.mp4
 ...
 ```
 
-### SilentSign extraction tests
+### VOXIS extraction tests
 
 #### User001
 
@@ -249,7 +249,7 @@ Therefore **license/provenance must be tracked per clip**, not assumed from the 
 
 ### Technical validation
 
-A YES sample was downloaded and processed through the same SilentSign MediaPipe extraction pipeline:
+A YES sample was downloaded and processed through the same VOXIS MediaPipe extraction pipeline:
 
 ```text
 Video: yes__ISL500__00106__Yes__session105__clip014.mp4
@@ -366,7 +366,7 @@ It can also support Rishi's avatar pipeline before Swayam shares selected motion
 
 ---
 
-## 7. DS-05 — Custom SilentSign Recordings
+## 7. DS-05 — Custom VOXIS Recordings
 
 ### Status
 
@@ -411,7 +411,7 @@ All recognition-training videos should ultimately pass through one canonical fea
 ```text
 INCLUDE ─────┐
 ISL500 ──────┤
-40-word ─────┼──→ SilentSign MediaPipe extractor
+40-word ─────┼──→ VOXIS MediaPipe extractor
 VOXIS ───────┤
 Custom ──────┘
                     ↓

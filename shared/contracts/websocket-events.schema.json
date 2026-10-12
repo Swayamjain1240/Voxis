@@ -1,43 +1,28 @@
 ﻿{
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://voxis.local/contracts/websocket-events.schema.json",
-  "title": "VOXIS WebSocket Events",
-  "description": "Shared event contract for real-time VOXIS communication.",
+  "title": "VOXIS WebSocket Transport Status",
+  "description": "Mode 1 does not accept or emit WebSocket events. This retained status contract prevents consumers from assuming the historical broadcast protocol is active.",
   "type": "object",
   "additionalProperties": false,
   "required": [
-    "event",
-    "schema_version",
-    "timestamp"
+    "transport",
+    "status",
+    "mode",
+    "schema_version"
   ],
   "properties": {
-    "event": {
-      "type": "string",
-      "enum": [
-        "speech.result",
-        "sign.prediction",
-        "conversation.message",
-        "room.joined",
-        "room.left",
-        "pipeline.status",
-        "error"
-      ]
+    "transport": {
+      "const": "websocket"
+    },
+    "status": {
+      "const": "disabled"
+    },
+    "mode": {
+      "const": "mode-1"
     },
     "schema_version": {
-      "type": "string"
-    },
-    "room_id": {
-      "type": ["string", "null"]
-    },
-    "sender_id": {
-      "type": ["string", "null"]
-    },
-    "timestamp": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "payload": {
-      "type": "object"
+      "const": "1.0.0"
     }
   }
 }

@@ -1,4 +1,9 @@
-# SilentSign — Phase 5: Complete Two-Way Pipelines
+# VOXIS — Phase 5: Complete Two-Way Pipelines
+
+> **Status: Planned.** Neither complete translation direction is connected in
+> the current checkout. The conversation UI and service boundaries are
+> scaffolding; audio capture alone is not Whisper transcription, and a
+> vocabulary fallback alone is not an end-to-end sign-to-speech flow.
 
 ## Objective
 

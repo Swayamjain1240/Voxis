@@ -5,7 +5,7 @@
 
 ## Context
 
-SilentSign is being developed mainly by two developers.
+VOXIS is being developed mainly by two developers.
 
 The project has two primary translation directions:
 

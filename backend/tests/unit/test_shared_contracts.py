@@ -7,6 +7,7 @@ from jsonschema import Draft202012Validator, FormatChecker
 from app.schemas.conversation import ConversationMessage
 from app.schemas.sign import SignPredictionResult
 from app.schemas.speech import TranscriptionResponse
+from app.schemas.websocket import WebSocketTransportStatus
 from app.services.language.text_to_gloss import VOCABULARY
 
 
@@ -39,3 +40,9 @@ def test_schema_vocabulary_cannot_silently_drift():
         schema = json.loads((CONTRACTS / f"{name}.schema.json").read_text(encoding="utf-8-sig"))
         assert set(schema["properties"]["glosses"]["items"]["enum"]) == VOCABULARY.glosses
         assert schema["properties"]["vocabulary_version"]["const"] == VOCABULARY.version
+
+
+def test_disabled_websocket_status_matches_shared_contract():
+    schema = json.loads((CONTRACTS / "websocket-events.schema.json").read_text(encoding="utf-8-sig"))
+    payload = WebSocketTransportStatus().model_dump(mode="json")
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(payload)

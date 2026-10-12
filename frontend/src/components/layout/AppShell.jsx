@@ -17,7 +17,7 @@ export default function AppShell({
 
           <span className="brand-text">
             <strong>VOXIS</strong>
-            <small>SilentSign</small>
+            <small>ISL communication</small>
           </span>
         </NavLink>
 

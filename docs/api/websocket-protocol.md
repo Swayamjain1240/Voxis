@@ -3,6 +3,10 @@
 > Current implementation: [current-contract.md](current-contract.md).
 > The examples below retain the target remote protocol; do not mix them with v1 runtime events.
 
+> **Current runtime boundary:** `/ws` is disabled for Mode 1. No event is
+> accepted, emitted, or broadcast. This document is a future Mode 2 design
+> reference only; the retained shared schema describes the disabled status.
+
 ## 1. Purpose
 
 WebSocket support is used for real-time communication and later for Mode 2 room-based conversations.

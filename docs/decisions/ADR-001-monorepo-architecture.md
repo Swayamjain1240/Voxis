@@ -1,12 +1,12 @@
 # ADR-001 — Monorepo with Separate Frontend, Backend, ML, and Shared Layers
 
 **Status:** Accepted  
-**Project:** SilentSign  
+**Project:** VOXIS
 **Decision Scope:** Repository architecture
 
 ## Context
 
-SilentSign contains several fundamentally different workloads:
+VOXIS contains several fundamentally different workloads:
 
 - React/Vite/TypeScript frontend
 - FastAPI backend
@@ -21,7 +21,7 @@ Mixing all code into a single backend or frontend directory would make ownership
 Use one Git repository with clear top-level boundaries:
 
 ```text
-SilentSign/
+VOXIS/
 ├── frontend/
 ├── backend/
 ├── ml/

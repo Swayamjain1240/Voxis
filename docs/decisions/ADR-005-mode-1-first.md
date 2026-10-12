@@ -5,7 +5,7 @@
 
 ## Context
 
-SilentSign can support:
+VOXIS can support:
 - Mode 1: face-to-face on one device
 - Mode 2: remote communication with room code
 - future login/friends

@@ -1,10 +1,15 @@
-# SilentSign — Phase 0: Dataset & Vocabulary
+# VOXIS — Phase 0: Dataset & Vocabulary
 
 ## Status
 
-**Current status: Conditional Pass / Completed enough to proceed**
+**Current status: Conditional foundation / completed enough to proceed, not fully closed**
 
-Phase 0 establishes the data foundation for both SilentSign directions before application development begins.
+Phase 0 establishes the data foundation for both VOXIS directions before application development begins.
+
+The repository has a documented source audit and a versioned 12-gloss bootstrap
+vocabulary, so work can proceed into the Phase 1 foundation. Final license
+verification and the later 30–50 sign target are still open. This status is a
+documentation/source record, not a claim that tests or builds were run.
 
 ---
 
@@ -112,6 +117,9 @@ These do not block Phase 1.
 ---
 
 ## 7. Definition of Done
+
+The checked items below are the recorded Phase 0 audit outcomes; they are not
+evidence of a build or test run in this documentation update.
 
 Phase 0 is considered complete enough when:
 

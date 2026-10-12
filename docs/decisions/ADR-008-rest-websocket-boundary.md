@@ -1,11 +1,11 @@
 # ADR-008 — REST for Request/Response, WebSocket for Real-Time and Mode 2
 
-**Status:** Accepted  
+**Status:** Accepted for future Mode 2; disabled in current Mode 1
 **Decision Scope:** Backend communication
 
 ## Context
 
-SilentSign needs both normal request/response operations and potentially real-time remote communication.
+VOXIS needs both normal request/response operations and potentially real-time remote communication.
 
 Not every operation needs a WebSocket.
 
@@ -23,7 +23,7 @@ For:
 - TTS requests
 - simple conversation operations
 
-### WebSocket
+### WebSocket (future Mode 2 only)
 
 For:
 - Mode 2 room presence
@@ -63,3 +63,12 @@ Positive:
 
 Trade-off:
 - two transport styles to maintain
+
+## Current foundation rule
+
+The current checkout does not accept WebSocket handshakes, emit events, or
+broadcast messages. The old global broadcast implementation was removed after
+the REST contract checkpoint. Mode 1 uses REST and browser-local capture. A
+future Mode 2 implementation must add authentication, room/resource
+authorization, event validation, per-connection limits, and isolation before
+changing this boundary.

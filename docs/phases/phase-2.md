@@ -1,4 +1,10 @@
-# SilentSign — Phase 2: Data & Speech Preparation
+# VOXIS — Phase 2: Data & Speech Preparation
+
+> **Status: Planned.** Phase 2 deliverables are not complete in the current
+> checkout. Some preprocessing and speech service interfaces exist as
+> scaffolding, but no training-ready dataset or working Whisper transcription
+> flow is recorded here. Do not infer completion from the presence of source
+> modules.
 
 ## Objective
 

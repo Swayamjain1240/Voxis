@@ -12,7 +12,7 @@ The API is designed around:
 - React + Vite + TypeScript frontend
 - FastAPI backend
 - REST for request/response operations
-- WebSocket for real-time communication
+- WebSocket for a future, authenticated Mode 2 real-time surface
 - Shared versioned contracts
 - Predictable validation and error responses
 
@@ -38,13 +38,13 @@ https://<backend-domain>/api/v1
 WebSocket base:
 
 ```text
-ws://localhost:8000/ws
+disabled in the current Mode 1 runtime
 ```
 
 Production:
 
 ```text
-wss://<backend-domain>/ws
+wss://<backend-domain>/ws (future Mode 2 only, after security review)
 ```
 
 ---

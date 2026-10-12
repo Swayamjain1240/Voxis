@@ -74,6 +74,9 @@ Mode 1 requests. CORS is not authentication.
 `/ws` refuses all handshakes (policy close 1008 before acceptance; HTTP servers
 may report this as a 403 handshake rejection). No data can be broadcast.
 Mode 1 uses REST. No environment flag enables an unreviewed WebSocket path.
+`shared/contracts/websocket-events.schema.json` is therefore a disabled
+transport-status contract, not an event envelope. The frontend WebSocket adapter
+does not open a browser socket and reports `WEBSOCKET_DISABLED` asynchronously.
 Private-route dependencies deny absent identity/permissions/resource ownership;
 they are an architectural boundary, not a login system. Public Mode 1 routes
 must not be treated as suitable for unrestricted Internet deployment.

@@ -1,8 +1,8 @@
-# SilentSign — Vocabulary Audit
+# VOXIS — Vocabulary Audit
 
 ## 1. Purpose
 
-This document tracks the SilentSign sign vocabulary, dataset coverage, confidence in each source, and which signs are ready for the first model.
+This document tracks the VOXIS sign vocabulary, dataset coverage, confidence in each source, and which signs are ready for the first model.
 
 The first model is a **fixed-vocabulary isolated-sign recognizer**. It is not unrestricted continuous ISL translation.
 
@@ -197,7 +197,7 @@ Preferred architecture:
 ```text
 raw source videos
       ↓
-SilentSign canonical MediaPipe extractor
+VOXIS canonical MediaPipe extractor
       ↓
 canonical landmark format
       ↓
@@ -359,7 +359,7 @@ Only add a sign when training data is credible.
 
 ## 12. Model Scope Statement
 
-The team should describe the first SilentSign model as:
+The team should describe the first VOXIS model as:
 
 > A fixed-vocabulary ISL sign recognizer for selected hospital, bank, office, and emergency concepts.
 

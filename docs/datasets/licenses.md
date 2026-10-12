@@ -1,8 +1,8 @@
-# SilentSign — Dataset Licenses and Usage Policy
+# VOXIS — Dataset Licenses and Usage Policy
 
 ## 1. Purpose
 
-This file is the legal/provenance checklist for every dataset used by SilentSign.
+This file is the legal/provenance checklist for every dataset used by VOXIS.
 
 **Rule:** a dataset is not production-approved merely because it is technically usable.
 
@@ -12,13 +12,13 @@ Before redistribution, publishing derived assets, or commercial deployment, its 
 
 ## 2. License Status Table
 
-| Dataset | Current known status | SilentSign action |
+| Dataset | Current known status | VOXIS action |
 |---|---|---|
 | AI4Bharat INCLUDE | Dataset card previously identified as CC BY 4.0 | Keep attribution; preserve source/license record |
 | ISL500 / ISL-DATA | Research/academic-use restrictions were previously reported; exact current terms must be verified before redistribution/commercial use | Treat as restricted until verified |
 | `vidit031/isl-isolated-40words` | Mixed upstream provenance; no single license should be assumed for every clip | Track provenance/license per clip |
 | Emergency ISL Gesture Dataset / VOXIS | License not established by the current audit report | Do not redistribute until license is verified |
-| Custom SilentSign recordings | Controlled by consent/release terms created by the team | Obtain explicit participant consent |
+| Custom VOXIS recordings | Controlled by consent/release terms created by the team | Obtain explicit participant consent |
 
 ---
 
@@ -36,7 +36,7 @@ CC BY 4.0
 
 Generally, CC BY 4.0 requires attribution when material is reused.
 
-SilentSign should preserve:
+VOXIS should preserve:
 
 ```text
 Dataset name
@@ -58,7 +58,7 @@ Before final release, verify the current official dataset page and store the exa
 
 The team previously encountered information indicating that ISL500 is intended for research/academic use and that commercial use may require author permission.
 
-Because this has **not yet been re-verified from an authoritative current license file**, SilentSign must treat ISL500 as:
+Because this has **not yet been re-verified from an authoritative current license file**, VOXIS must treat ISL500 as:
 
 ```text
 RESEARCH-ONLY / RESTRICTED UNTIL VERIFIED
@@ -74,7 +74,7 @@ RESEARCH-ONLY / RESTRICTED UNTIL VERIFIED
 ### Do not assume permission for
 
 - republishing the raw dataset
-- uploading raw videos to the SilentSign repository
+- uploading raw videos to the VOXIS repository
 - commercial redistribution
 - bundling source clips into a public product
 
@@ -203,7 +203,7 @@ Do not assume that "derived" automatically means unrestricted.
 
 ---
 
-## 8. Custom SilentSign Recordings
+## 8. Custom VOXIS Recordings
 
 If the team records its own sign samples, create a simple contributor/participant consent process.
 

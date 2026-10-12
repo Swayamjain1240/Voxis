@@ -1,10 +1,19 @@
-# SilentSign — Sign-to-Speech Architecture
+# VOXIS — Sign-to-Speech Architecture
 
 ## 1. Owner
 
 **Primary owner: Swayam**
 
-This pipeline converts ISL signing captured through the camera into a recognized gloss sequence, natural-language text, and spoken audio.
+This document describes the target pipeline that converts ISL signing captured
+through the camera into a recognized gloss sequence, natural-language text, and
+spoken audio.
+
+> **Current status:** **Partial / scaffold.** The repository contains camera
+> lifecycle/UI pieces, landmark helpers, a frame-buffer utility, and ML
+> development modules. The browser MediaPipe processor is not wired into the
+> current route, no trained model is loaded, and gloss-to-text/TTS are not an
+> end-to-end runtime. The current shared vocabulary is fixed at 12 glosses;
+> this is not unrestricted continuous ISL translation.
 
 ---
 
@@ -364,6 +373,9 @@ Export only after:
 ---
 
 ## 17. Phase Mapping
+
+The mapping below is a delivery plan, not a completion checklist. Phase 1 is
+currently partial; later steps remain planned.
 
 **Phase 1:** Camera, MediaPipe, overlay, frame buffer  
 **Phase 2:** extraction, cleaning, normalization, signer-wise split  

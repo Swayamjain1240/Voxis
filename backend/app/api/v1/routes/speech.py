@@ -38,7 +38,10 @@ async def upload_audio(
     request: Request,
     audio: UploadFile = File(...),
 ):
-    metadata = await validate_audio_upload(audio)
+    metadata = await validate_audio_upload(
+        audio,
+        max_audio_upload_mb=request.app.state.settings.max_audio_upload_mb,
+    )
 
     return success(request, AudioUploadResponse(
         filename=metadata.filename,
@@ -57,7 +60,10 @@ async def transcribe(
     request: Request,
     audio: UploadFile = File(...),
 ):
-    metadata = await validate_audio_upload(audio)
+    metadata = await validate_audio_upload(
+        audio,
+        max_audio_upload_mb=request.app.state.settings.max_audio_upload_mb,
+    )
 
     try:
         result = await whisper_service.transcribe(

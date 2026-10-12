@@ -1,4 +1,5 @@
 from io import BytesIO
+import wave
 
 from fastapi.testclient import (
     TestClient,
@@ -8,6 +9,16 @@ from app.main import app
 
 
 client = TestClient(app, base_url="http://localhost")
+
+
+def wav_fixture():
+    output = BytesIO()
+    with wave.open(output, "wb") as audio:
+        audio.setnchannels(1)
+        audio.setsampwidth(2)
+        audio.setframerate(8000)
+        audio.writeframes(b"\x00\x00")
+    return output.getvalue()
 
 
 def test_speech_capabilities():
@@ -25,17 +36,15 @@ def test_speech_capabilities():
 
 
 def test_audio_upload():
-    audio = BytesIO(
-        b"fake-audio-content"
-    )
+    audio = BytesIO(wav_fixture())
 
     response = client.post(
         "/api/v1/speech/upload",
         files={
             "audio": (
-                "test.webm",
+                "test.wav",
                 audio,
-                "audio/webm",
+                "audio/wav",
             )
         },
     )
@@ -45,7 +54,7 @@ def test_audio_upload():
     data = response.json()["data"]
 
     assert data["accepted"] is True
-    assert data["filename"] == "test.webm"
+    assert data["filename"] == "test.wav"
     assert data["size_bytes"] > 0
 
 
@@ -54,9 +63,9 @@ def test_empty_audio():
         "/api/v1/speech/upload",
         files={
             "audio": (
-                "empty.webm",
+                "empty.wav",
                 BytesIO(b""),
-                "audio/webm",
+                "audio/wav",
             )
         },
     )

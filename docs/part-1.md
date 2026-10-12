@@ -92,7 +92,11 @@ Mode 1; no configuration flag bypasses that decision. No account system is
 claimed. API security does not substitute for frontend viewport/accessibility
 checks or a production deployment review.
 
-Verification: 92 backend tests pass, including chunked overflow, slow body,
-concurrent request saturation/recovery, permission/ownership denial, CORS,
-production TLS, and safe unexpected errors. Audio content validation and
-removal of unused broadcast helpers follow in the next checkpoint.
+Verification: 98 backend tests and 7 frontend tests pass. `npm run build`
+completes with existing Vite warnings. Backend coverage includes chunked
+overflow, slow body, concurrent
+request saturation/recovery, permission/ownership denial, CORS, production TLS,
+safe unexpected errors, and audio content validation. MIME-only/text uploads
+are rejected with bounded reads and integration tests use valid WAV fixtures.
+The historical global broadcast helpers and client socket opener are removed;
+Mode 1 retains a tested disabled transport boundary.

@@ -5,7 +5,7 @@
 
 ## Context
 
-SilentSign uses multiple ISL datasets.
+VOXIS uses multiple ISL datasets.
 
 Different datasets may provide:
 - raw videos
@@ -18,7 +18,7 @@ Directly combining incompatible features can corrupt training.
 
 ## Decision
 
-All recognition-training data should pass through a **SilentSign canonical MediaPipe extraction pipeline** whenever raw video is available.
+All recognition-training data should pass through a **VOXIS canonical MediaPipe extraction pipeline** whenever raw video is available.
 
 Canonical sources:
 
@@ -29,7 +29,7 @@ ISL500
 Rishi/VOXIS
 custom recordings
         ↓
-SilentSign MediaPipe extractor
+VOXIS MediaPipe extractor
         ↓
 canonical landmark format
 ```

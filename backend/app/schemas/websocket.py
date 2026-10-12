@@ -1,14 +1,12 @@
-import time
+from typing import Literal
 
-from pydantic import BaseModel, Field
+from app.schemas.common import ContractModel, Version
 
 
-class WebSocketEvent(BaseModel):
-    type: str
-    data: dict = Field(
-        default_factory=dict
-    )
-    timestamp: int = Field(
-        default_factory=lambda:
-            int(time.time() * 1000)
-    )
+class WebSocketTransportStatus(ContractModel):
+    """The only WebSocket state exposed by the Mode 1 runtime."""
+
+    schema_version: Version = "1.0.0"
+    transport: Literal["websocket"] = "websocket"
+    status: Literal["disabled"] = "disabled"
+    mode: Literal["mode-1"] = "mode-1"

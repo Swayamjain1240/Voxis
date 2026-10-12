@@ -14,9 +14,11 @@ at server boundaries, and contract tests checking real serialized models.
 - Client-supplied conversation senders cannot impersonate system/pipeline senders.
 - Sign requests contain 60 raw frames of 300 finite features in extractor order.
   This does not implement normalization or model inference.
-- REST success/error envelopes and WebSocket event/payload adapters are migrated
-  with their callers in the next checkpoints. The old broadcast wire format is
-  not a stable public protocol and must not be silently mixed with the new one.
+- REST success/error envelopes are migrated with their callers. Mode 1 does not
+  expose WebSocket events: the old broadcast wire format and its adapters were
+  removed rather than silently mixed with the v1 REST contract. The shared
+  WebSocket file is a disabled transport-status contract until a separately
+  reviewed Mode 2 protocol exists.
 
 Alternatives: preserving every incompatible draft indefinitely would create
 multiple sources of truth; deleting compatibility immediately would break known

@@ -1,10 +1,18 @@
-# SilentSign — Speech-to-Sign Architecture
+# VOXIS — Speech-to-Sign Architecture
 
 ## 1. Owner
 
 **Primary owner: Rishi**
 
-This pipeline converts spoken language into text, maps the text to a restricted ISL gloss sequence, and plays corresponding sign animations through a 3D avatar.
+This document describes the target pipeline that converts spoken language into
+text, maps the text to a restricted ISL gloss sequence, and plays corresponding
+sign animations through a 3D avatar.
+
+> **Current status:** **Partial / scaffold.** Browser microphone capture and a
+> procedural avatar are source-backed in Phase 1. Whisper transcription,
+> connected text-to-gloss, a real animation registry, and sign-clip playback
+> are not complete. The current fixed vocabulary contains 12 glosses; it does
+> not imply unrestricted language coverage.
 
 ---
 
@@ -379,6 +387,9 @@ Backend must:
 
 ## 17. Phase Mapping
 
+The mapping below is a delivery plan, not a completion checklist. Phase 1 is
+currently partial; later steps remain planned.
+
 **Phase 1:** mic permission, audio capture, avatar loads, basic animation  
 **Phase 2:** Whisper, transcript, retry/error handling  
 **Phase 3:** text → gloss, vocabulary restriction, context prompts  
@@ -389,6 +400,9 @@ Backend must:
 ---
 
 ## 18. Definition of Done
+
+This is a later-phase acceptance target, not a statement that the current
+checkout already passes it.
 
 ```text
 Hearing user speaks

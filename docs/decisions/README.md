@@ -1,6 +1,6 @@
-# SilentSign — Architecture Decision Records
+# VOXIS — Architecture Decision Records
 
-This folder contains Architecture Decision Records (ADRs) for important technical and product decisions in SilentSign.
+This folder contains Architecture Decision Records (ADRs) for important technical and product decisions in VOXIS.
 
 Each ADR records:
 

@@ -1,8 +1,12 @@
-# SilentSign — Phase 6: Integration, Reliability & Final Application
+# VOXIS — Phase 6: Integration, Reliability & Final Application
+
+> **Status: Planned.** Phase 6 is a release/integration target, not the current
+> product status. The controls below must be completed and evidenced before
+> describing VOXIS as a production-ready application.
 
 ## Objective
 
-Merge both working pipelines into one polished SilentSign application.
+Merge both working pipelines into one polished VOXIS application.
 
 Primary target: **Mode 1 face-to-face communication on one device.**
 
@@ -135,6 +139,11 @@ Production debug mode should remain disabled by default.
 
 ## 7. Security Checklist
 
+The checklist is future work for the later integrated/deployed product. Current
+Phase 1 applicability and gaps are recorded in
+[`docs/security-threat-model.md`](../security-threat-model.md); a checked item
+below must not be read as already implemented.
+
 - [ ] secrets in environment variables
 - [ ] no API key in frontend
 - [ ] strict CORS allowlist
@@ -215,7 +224,7 @@ Before final submission:
 
 ## 11. Final Definition of Done
 
-SilentSign is ready when a face-to-face conversation can happen on one device:
+VOXIS is ready when a face-to-face conversation can happen on one device:
 
 ```text
 Sign user signs

@@ -7,7 +7,7 @@
 
 Full unrestricted continuous sign-language translation is substantially harder than isolated/focused sign recognition.
 
-SilentSign is a hackathon project and must prioritize reliability and a working demonstration.
+VOXIS is a hackathon project and must prioritize reliability and a working demonstration.
 
 ## Decision
 

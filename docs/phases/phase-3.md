@@ -1,4 +1,9 @@
-# SilentSign — Phase 3: AI Core
+# VOXIS — Phase 3: AI Core
+
+> **Status: Planned.** Model and language-layer work is not complete in the
+> current checkout. Model definitions and a deterministic vocabulary-constrained
+> fallback exist as scaffolding; there is no source-backed claim of a trained,
+> evaluated, or deployed sign model or LLM pipeline.
 
 ## Objective
 

@@ -1,4 +1,8 @@
-# SilentSign — Phase 4: Real-Time Recognition & Avatar
+# VOXIS — Phase 4: Real-Time Recognition & Avatar
+
+> **Status: Planned.** Live model inference, confidence/rejection behavior,
+> real sign-animation clips, and caption-synchronized playback are not complete
+> in the current checkout. The Phase 1 avatar is a procedural foundation only.
 
 ## Objective
 

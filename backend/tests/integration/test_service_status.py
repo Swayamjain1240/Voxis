@@ -1,9 +1,21 @@
 from fastapi.testclient import TestClient
+from io import BytesIO
+import wave
 
 from app.main import app
 from app.api.v1.routes import speech, sign
 from app.services.speech.whisper_service import WhisperService
 from app.services.sign_recognition.inference import SignInferenceService
+
+
+def wav_fixture():
+    output = BytesIO()
+    with wave.open(output, "wb") as audio:
+        audio.setnchannels(1)
+        audio.setsampwidth(2)
+        audio.setframerate(8000)
+        audio.writeframes(b"\x00\x00")
+    return output.getvalue()
 
 
 def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
@@ -14,7 +26,7 @@ def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
         assert capabilities["transcription_status"] == "unavailable"
         response = client.post(
             "/api/v1/speech/transcribe",
-            files={"audio": ("sample.webm", b"temporary fixture", "audio/webm")},
+            files={"audio": ("sample.wav", wav_fixture(), "audio/wav")},
         )
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "WHISPER_UNAVAILABLE"
