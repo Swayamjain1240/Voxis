@@ -1,90 +1,41 @@
-import json
 import re
-from pathlib import Path
 
+from fastapi import HTTPException
 
-BACKEND_ROOT = Path(
-    __file__
-).resolve().parents[3]
-
-VOCABULARY_PATH = (
-    BACKEND_ROOT.parent
-    / "shared"
-    / "vocabulary"
-    / "vocabulary.json"
+from app.services.language.vocabulary import (
+    CONTEXTS_PATH,
+    VOCABULARY_PATH,
+    Vocabulary,
+    load_vocabulary,
 )
 
 
-FALLBACK_VOCABULARY = {
-    "DOCTOR",
-    "PATIENT",
-    "MEDICINE",
-    "SICK",
-    "YESTERDAY",
-    "BANK",
-    "MONEY",
-    "YES",
-    "NO",
-    "WHERE",
-    "HELP",
-    "PAIN",
-}
+VOCABULARY = load_vocabulary(VOCABULARY_PATH, CONTEXTS_PATH)
+ALLOWED_GLOSSES = VOCABULARY.glosses
 
 
 def _load_allowed_vocabulary():
-    try:
-        payload = json.loads(
-            VOCABULARY_PATH.read_text(
-                encoding="utf-8"
-            )
-        )
-
-        return {
-            item["gloss"].upper()
-            for item in payload.get(
-                "vocabulary",
-                []
-            )
-            if "gloss" in item
-        }
-    except (
-        OSError,
-        json.JSONDecodeError,
-        KeyError,
-        TypeError,
-    ):
-        return FALLBACK_VOCABULARY
+    """Compatibility helper backed by the shared items contract."""
+    return load_vocabulary(VOCABULARY_PATH).glosses
 
 
-ALLOWED_GLOSSES = (
-    _load_allowed_vocabulary()
-)
-
-
-KEYWORD_MAP = {
-    "doctor": "DOCTOR",
-    "patient": "PATIENT",
-    "medicine": "MEDICINE",
+# Optional synonyms do not expand the vocabulary loaded from shared data.
+KEYWORD_ALIASES = {
     "medication": "MEDICINE",
-    "sick": "SICK",
     "ill": "SICK",
-    "yesterday": "YESTERDAY",
-    "bank": "BANK",
-    "money": "MONEY",
     "cash": "MONEY",
-    "yes": "YES",
     "yeah": "YES",
     "yep": "YES",
-    "no": "NO",
-    "where": "WHERE",
-    "help": "HELP",
-    "pain": "PAIN",
     "ache": "PAIN",
 }
+KEYWORD_MAP = {**VOCABULARY.keywords, **KEYWORD_ALIASES}
 
 
 def text_to_gloss(
     text: str,
+    context: str | None = None,
+    *,
+    vocabulary: Vocabulary = VOCABULARY,
 ) -> list[str]:
     """
     Deterministic Phase-3 fallback.
@@ -97,6 +48,16 @@ def text_to_gloss(
     if not text:
         return []
 
+    allowed_glosses = vocabulary.glosses
+    if context is not None:
+        context = context.strip().lower()
+        if context not in vocabulary.contexts:
+            raise HTTPException(
+                status_code=400,
+                detail="Unknown vocabulary context.",
+            )
+        allowed_glosses = vocabulary.contexts[context]
+
     words = re.findall(
         r"[a-zA-Z']+",
         text.lower(),
@@ -105,11 +66,11 @@ def text_to_gloss(
     result = []
 
     for word in words:
-        gloss = KEYWORD_MAP.get(word)
+        gloss = vocabulary.keywords.get(word) or KEYWORD_ALIASES.get(word)
 
         if (
             gloss
-            and gloss in ALLOWED_GLOSSES
+            and gloss in allowed_glosses
             and gloss not in result
         ):
             result.append(gloss)

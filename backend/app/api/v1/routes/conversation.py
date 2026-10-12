@@ -48,8 +48,9 @@ async def message(
 @router.post("/text-to-gloss")
 async def convert_text_to_gloss(
     text: str,
+    context: str | None = None,
 ):
-    glosses = text_to_gloss(text)
+    glosses = text_to_gloss(text, context=context)
 
     return {
         "text": text,
