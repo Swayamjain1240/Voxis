@@ -60,3 +60,11 @@ The virtual environment's pip is updated independently; it is not an app API.
 After these corrections, all 31 backend tests passed, `pip check` passed and
 the complete installed-environment `pip-audit` reported no known vulnerabilities.
 `constraints.txt` records the audited Windows/Python 3.12 dependency resolution.
+
+### Canonical message validation
+
+Conversation, speech-result, and sign-prediction models now serialize against
+the shared v1 JSON schemas. Inputs reject invalid sources, unknown glosses,
+oversized text, unexpected fields, incorrect frame dimensions, and nonfinite
+landmarks. Conversation IDs/timestamps support the documented input migration
+in ADR-009. These checks do not implement model inference or browser capture.

@@ -24,7 +24,7 @@ def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
 def test_enabled_model_cannot_return_empty_success(monkeypatch):
     monkeypatch.setattr(sign, "sign_service", SignInferenceService(enabled=True))
     with TestClient(app) as client:
-        response = client.post("/api/v1/sign/predict", json={"frames": []})
+        response = client.post("/api/v1/sign/predict", json={"frames": [[0.0] * 300] * 60})
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "SIGN_MODEL_UNAVAILABLE"
 

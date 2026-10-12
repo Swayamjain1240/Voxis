@@ -130,3 +130,17 @@ def load_vocabulary(
         contexts=allowed_contexts,
         default_context=default_context,
     )
+
+
+def load_label_map(vocabulary: Vocabulary, path: Path = VOCABULARY_DIRECTORY / "label_map.json") -> dict[str, int]:
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    labels = payload.get("gloss_to_label", {})
+    if payload.get("version") != vocabulary.version or set(labels) != vocabulary.glosses:
+        raise ValueError("Label map must match the active vocabulary and version.")
+    if any(type(index) is not int for index in labels.values()):
+        raise ValueError("Class labels must be integers.")
+    if sorted(labels.values()) != list(range(len(labels))):
+        raise ValueError("Class labels must be unique and contiguous.")
+    if payload.get("labels") != {str(index): gloss for gloss, index in labels.items()}:
+        raise ValueError("Label map directions must agree.")
+    return labels

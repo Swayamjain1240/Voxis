@@ -1,7 +1,11 @@
-from pydantic import BaseModel, Field
+from typing import Literal
+
+from pydantic import Field
+
+from app.schemas.common import ContractModel, GlossList, Text, Timestamp, Version, utc_now
 
 
-class AudioUploadResponse(BaseModel):
+class AudioUploadResponse(ContractModel):
     filename: str
     content_type: str
     size_bytes: int = Field(
@@ -11,13 +15,17 @@ class AudioUploadResponse(BaseModel):
     accepted: bool
 
 
-class TranscriptionResponse(BaseModel):
-    text: str
-    language: str
+class TranscriptionResponse(ContractModel):
+    type: Literal["speech_result"] = "speech_result"
+    schema_version: Version = "1.0.0"
+    vocabulary_version: Version = "1.0.0"
+    transcript: Text
+    language: Literal["en"] = "en"
     confidence: float | None = Field(
         default=None,
         ge=0.0,
         le=1.0,
     )
-    source: str = "whisper"
-    timestamp: int
+    glosses: GlossList = Field(default_factory=list)
+    source: Literal["microphone", "audio_file", "api"] = "microphone"
+    timestamp: Timestamp = Field(default_factory=utc_now)

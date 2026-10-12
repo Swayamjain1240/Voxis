@@ -3,7 +3,7 @@ import time
 from fastapi import APIRouter
 
 from app.schemas.conversation import (
-    ConversationMessage,
+    ConversationInput,
     ConversationTurn,
 )
 from app.services.language.gloss_to_text import (
@@ -22,7 +22,7 @@ router = APIRouter()
     response_model=ConversationTurn,
 )
 async def message(
-    payload: ConversationMessage,
+    payload: ConversationInput,
 ):
     glosses = payload.glosses
 
@@ -32,7 +32,7 @@ async def message(
         and payload.text
     ):
         glosses = text_to_gloss(
-            payload.text
+            payload.text, context=payload.context
         )
 
     return ConversationTurn(
@@ -40,6 +40,7 @@ async def message(
         source=payload.source,
         text=payload.text,
         glosses=glosses,
+        context=payload.context,
         timestamp=payload.timestamp
         or int(time.time() * 1000),
     )
