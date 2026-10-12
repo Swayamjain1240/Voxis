@@ -1,4 +1,4 @@
-from fastapi import APIRouter, File, UploadFile
+from fastapi import APIRouter, File, Request, UploadFile
 
 from app.core.exceptions import FeatureNotEnabledError
 from app.schemas.speech import (
@@ -9,6 +9,7 @@ from app.services.speech.audio_processor import (
     validate_audio_upload,
 )
 from app.services.speech.whisper_service import WhisperService
+from app.schemas.response import ApiResponse, success
 
 
 router = APIRouter()
@@ -17,51 +18,54 @@ whisper_service = WhisperService()
 
 
 @router.get("/capabilities")
-async def capabilities():
+async def capabilities(request: Request):
     status = whisper_service.status()
-    return {
+    return success(request, {
         "microphone_capture": True,
         "audio_upload": True,
         "transcription": status["available"],
         "transcription_status": status["status"],
         "language": "en",
         "phase": 1,
-    }
+    })
 
 
 @router.post(
     "/upload",
-    response_model=AudioUploadResponse,
+    response_model=ApiResponse[AudioUploadResponse],
 )
 async def upload_audio(
+    request: Request,
     audio: UploadFile = File(...),
 ):
     metadata = await validate_audio_upload(audio)
 
-    return AudioUploadResponse(
+    return success(request, AudioUploadResponse(
         filename=metadata.filename,
         content_type=metadata.content_type,
         size_bytes=metadata.size_bytes,
         duration_ms=None,
         accepted=True,
-    )
+    ))
 
 
 @router.post(
     "/transcribe",
-    response_model=TranscriptionResponse,
+    response_model=ApiResponse[TranscriptionResponse],
 )
 async def transcribe(
+    request: Request,
     audio: UploadFile = File(...),
 ):
     metadata = await validate_audio_upload(audio)
 
     try:
-        return await whisper_service.transcribe(
+        result = await whisper_service.transcribe(
             audio_bytes=metadata.content,
             filename=metadata.filename,
             content_type=metadata.content_type,
         )
+        return success(request, result)
 
     except FeatureNotEnabledError:
         raise

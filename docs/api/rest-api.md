@@ -1,8 +1,11 @@
-# SilentSign — REST API Contract
+# VOXIS — REST API Contract
+
+> Current implemented routes/formats: [current-contract.md](current-contract.md).
+> The examples below retain the original future API plan; they are not active contracts.
 
 ## 1. Purpose
 
-This file defines the planned REST endpoints for SilentSign.
+This file defines the planned REST endpoints for VOXIS.
 
 > Status: **Planned contract**.  
 > An endpoint becomes production-valid only after implementation, tests, and contract verification.

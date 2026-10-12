@@ -68,3 +68,12 @@ the shared v1 JSON schemas. Inputs reject invalid sources, unknown glosses,
 oversized text, unexpected fields, incorrect frame dimensions, and nonfinite
 landmarks. Conversation IDs/timestamps support the documented input migration
 in ADR-009. These checks do not implement model inference or browser capture.
+
+### REST integration and frontend compatibility
+
+All REST responses now use the canonical success/error envelope with request IDs.
+The frontend adapter unwraps data, handles safe errors, bounds request time, and
+uses JSON language requests. Backend integration tests validate actual responses
+against shared schemas and check invalid inputs. The frontend vocabulary now
+comes from the same shared JSON; transcript keys and JSDoc follow canonical IDs.
+Wire details and bounded legacy inputs are in `docs/api/current-contract.md`.

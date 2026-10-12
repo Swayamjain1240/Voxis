@@ -10,7 +10,7 @@ health_module = importlib.import_module("app.api.v1.routes.health")
 
 
 def test_health_reports_disabled_optional_services_honestly():
-    payload = asyncio.run(health_module.health())
+    payload = health_module.component_health()
     components = payload["components"]
 
     assert components["whisper"] == "disabled"
@@ -36,7 +36,7 @@ def test_health_does_not_report_enabled_placeholders_as_ready(monkeypatch):
         TTSService(enabled=True),
     )
 
-    payload = asyncio.run(health_module.health())
+    payload = health_module.component_health()
     components = payload["components"]
 
     assert components["whisper"] == "unavailable"

@@ -61,6 +61,11 @@ class GlossToTextRequest(ContractModel):
     context: Context | None = None
     language: Literal["en"] = "en"
 
+    @model_validator(mode="before")
+    @classmethod
+    def accept_legacy_list(cls, value):
+        return {"glosses": value} if isinstance(value, list) else value
+
     @model_validator(mode="after")
     def constrain_context(self):
         if self.context and any(g not in VOCABULARY.contexts[self.context] for g in self.glosses):

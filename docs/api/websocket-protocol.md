@@ -1,4 +1,7 @@
-# SilentSign — WebSocket Protocol
+# VOXIS — WebSocket Protocol
+
+> Current implementation: [current-contract.md](current-contract.md).
+> The examples below retain the target remote protocol; do not mix them with v1 runtime events.
 
 ## 1. Purpose
 
@@ -497,4 +500,4 @@ WebSocket becomes important for:
 - landmark/text transfer
 - peer state
 
-Mode 2 is a later milestone, not a blocker for the first SilentSign MVP.
+Mode 2 is a later milestone, not a blocker for the first VOXIS MVP.

@@ -21,6 +21,8 @@ async function request(
     {
       ...options,
       headers,
+      signal: options.signal || AbortSignal.timeout(15000),
+      credentials: "omit",
     }
   );
 
@@ -37,16 +39,20 @@ async function request(
       : await response.text();
 
   if (!response.ok) {
-    const message =
-      typeof payload === "object" &&
-      payload?.detail
-        ? payload.detail
-        : `Request failed with status ${response.status}`;
-
-    throw new Error(message);
+    const message = payload?.error?.message ||
+      (typeof payload?.detail === "string" ? payload.detail :
+        `Request failed with status ${response.status}`);
+    const error = new Error(message);
+    error.code = payload?.error?.code || "REQUEST_ERROR";
+    error.requestId = payload?.meta?.request_id;
+    throw error;
   }
 
-  return payload;
+  if (payload?.success !== true || payload?.meta?.api_version !== "v1" ||
+      payload?.meta?.schema_version !== "1.0.0" || !("data" in payload)) {
+    throw new Error("The server returned an unsupported response contract.");
+  }
+  return payload.data;
 }
 
 export function getHealth() {
@@ -94,6 +100,22 @@ export function transcribeSpeech(
       body: formData,
     }
   );
+}
+
+export function postConversationMessage(message) {
+  return request("/conversation/message", { method: "POST", body: JSON.stringify(message) });
+}
+
+export function textToGloss(text, context = null) {
+  return request("/conversation/text-to-gloss", {
+    method: "POST", body: JSON.stringify({ text, context }),
+  });
+}
+
+export function glossToText(glosses, context = null) {
+  return request("/conversation/gloss-to-text", {
+    method: "POST", body: JSON.stringify({ glosses, context }),
+  });
 }
 
 export { API_BASE_URL };

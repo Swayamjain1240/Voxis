@@ -18,7 +18,7 @@ def test_text_to_gloss():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["glosses"] == [
         "WHERE",
@@ -38,7 +38,7 @@ def test_conversation_message():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["source"] == "speech"
     assert "PAIN" in data["glosses"]

@@ -17,7 +17,7 @@ def test_speech_capabilities():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["microphone_capture"] is True
     assert data["audio_upload"] is True
@@ -42,7 +42,7 @@ def test_audio_upload():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["accepted"] is True
     assert data["filename"] == "test.webm"

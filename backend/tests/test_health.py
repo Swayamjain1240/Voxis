@@ -13,7 +13,7 @@ def test_root():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["name"] == "VOXIS"
     assert data["status"] == "running"
@@ -27,7 +27,7 @@ def test_health():
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["data"]
 
     assert data["status"] == "ok"
     assert data["components"]["api"] == "ready"
@@ -39,4 +39,4 @@ def test_liveness():
     )
 
     assert response.status_code == 200
-    assert response.json()["status"] == "alive"
+    assert response.json()["data"]["status"] == "alive"

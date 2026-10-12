@@ -1,8 +1,11 @@
-# SilentSign — API Overview
+# VOXIS — API Overview
+
+> Current implemented formats and compatibility rules: [current-contract.md](current-contract.md).
+> The examples below are historical target designs, not the active wire contract.
 
 ## 1. Purpose
 
-This document defines the planned API contract between the SilentSign frontend, backend, ML runtime, speech services, and optional Mode 2 real-time communication.
+This document defines the planned API contract between the VOXIS frontend, backend, ML runtime, speech services, and optional Mode 2 real-time communication.
 
 The API is designed around:
 

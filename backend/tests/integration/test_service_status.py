@@ -9,7 +9,7 @@ from app.services.sign_recognition.inference import SignInferenceService
 def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
     monkeypatch.setattr(speech, "whisper_service", WhisperService(enabled=True))
     with TestClient(app) as client:
-        capabilities = client.get("/api/v1/speech/capabilities").json()
+        capabilities = client.get("/api/v1/speech/capabilities").json()["data"]
         assert capabilities["transcription"] is False
         assert capabilities["transcription_status"] == "unavailable"
         response = client.post(

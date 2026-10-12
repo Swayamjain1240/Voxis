@@ -5,6 +5,8 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 from starlette.requests import Request
 
+from app.schemas.response import request_meta
+
 
 class VOXISException(Exception):
     """Base exception for application-level errors."""
@@ -111,9 +113,12 @@ def _status_code_to_error_code(status_code: int) -> str:
         401: "UNAUTHORIZED",
         403: "FORBIDDEN",
         404: "NOT_FOUND",
+        405: "METHOD_NOT_ALLOWED",
+        408: "REQUEST_TIMEOUT",
         413: "PAYLOAD_TOO_LARGE",
         415: "UNSUPPORTED_MEDIA_TYPE",
         422: "VALIDATION_ERROR",
+        429: "RATE_LIMITED",
         501: "NOT_IMPLEMENTED",
         503: "SERVICE_UNAVAILABLE",
     }.get(status_code, "INTERNAL_ERROR" if status_code >= 500 else "REQUEST_ERROR")
@@ -140,10 +145,7 @@ def http_exception_handler(
                 "message": message,
                 "details": details,
             },
-            "meta": {
-                "request_id": None,
-                "api_version": "v1",
-            },
+            "meta": request_meta(_request),
             # Keep the old field for the current Mode 1 frontend/client boundary.
             "detail": exc.detail,
         },
@@ -171,10 +173,7 @@ def validation_exception_handler(
                 "message": "The request could not be validated.",
                 "details": details,
             },
-            "meta": {
-                "request_id": None,
-                "api_version": "v1",
-            },
+            "meta": request_meta(_request),
             "detail": details,
         },
     )
@@ -194,10 +193,7 @@ def unhandled_exception_handler(
                 "message": "The service could not process the request.",
                 "details": {},
             },
-            "meta": {
-                "request_id": None,
-                "api_version": "v1",
-            },
+            "meta": request_meta(_request),
             "detail": "The service could not process the request.",
         },
     )

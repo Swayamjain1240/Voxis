@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import (
     FastAPI,
     HTTPException,
+    Request,
     WebSocket,
     WebSocketDisconnect,
 )
@@ -18,6 +19,8 @@ from app.core.exceptions import (
     validation_exception_handler,
 )
 from app.core.logging import configure_logging
+from app.core.request_context import RequestContextMiddleware
+from app.schemas.response import success
 from app.websocket.events import build_event
 from app.websocket.manager import connection_manager
 
@@ -42,7 +45,7 @@ app = FastAPI(
     title=settings.app_name,
     version="0.1.0",
     description=(
-        "Backend for VOXIS / SilentSign ? "
+        "Backend for VOXIS: "
         "two-way Indian Sign Language communication."
     ),
     docs_url="/docs",
@@ -66,6 +69,7 @@ app.add_exception_handler(
 app.add_exception_handler(Exception, unhandled_exception_handler)
 
 configure_cors(app)
+app.add_middleware(RequestContextMiddleware)
 
 app.include_router(
     api_router,
@@ -74,15 +78,15 @@ app.include_router(
 
 
 @app.get("/", tags=["system"])
-async def root():
-    return {
+async def root(request: Request):
+    return success(request, {
         "name": settings.app_name,
         "status": "running",
         "environment": settings.environment,
         "phase": 1,
         "mode": "mode-1",
         "docs": "/docs",
-    }
+    })
 
 
 @app.websocket("/ws")

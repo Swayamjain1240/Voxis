@@ -1,9 +1,10 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Request
 
 from app.core.config import settings
 from app.services.sign_recognition.inference import SignInferenceService
 from app.services.speech.whisper_service import WhisperService
 from app.services.tts.tts_service import TTSService
+from app.schemas.response import success
 
 
 router = APIRouter()
@@ -18,7 +19,11 @@ def _llm_status() -> str:
 
 
 @router.get("")
-async def health():
+async def health(request: Request):
+    return success(request, component_health())
+
+
+def component_health():
     return {
         "status": "ok",
         "service": settings.app_name,
@@ -38,13 +43,15 @@ async def health():
 
 
 @router.get("/live")
-async def liveness():
-    return {"status": "alive"}
+async def liveness(request: Request):
+    return success(request, {"status": "alive"})
 
 
 @router.get("/ready")
-async def readiness():
-    return {
+async def readiness(request: Request):
+    return success(request, {
         "status": "ready",
         "phase": 1,
-    }
+        "scope": "api-only",
+        "translation_ready": False,
+    })

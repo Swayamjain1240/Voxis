@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "VOXIS REST envelope v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["success", "meta"],
+  "properties": {
+    "success": {"type": "boolean"},
+    "data": {},
+    "error": {
+      "type": "object", "additionalProperties": false,
+      "required": ["code", "message", "details"],
+      "properties": {"code": {"type": "string"}, "message": {"type": "string"}, "details": {"type": ["object", "array"]}}
+    },
+    "detail": {"type": ["string", "array", "object"]},
+    "meta": {
+      "type": "object", "additionalProperties": false,
+      "required": ["request_id", "api_version", "schema_version"],
+      "properties": {
+        "request_id": {"type": "string", "pattern": "^[a-f0-9]{32}$"},
+        "api_version": {"const": "v1"}, "schema_version": {"const": "1.0.0"}
+      }
+    }
+  },
+  "if": {"properties": {"success": {"const": true}}},
+  "then": {"required": ["data"], "not": {"required": ["error"]}},
+  "else": {"required": ["error"], "not": {"required": ["data"]}}
+}

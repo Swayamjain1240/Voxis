@@ -15,7 +15,7 @@ export default function Transcript({
     <div className="transcript">
       {messages.map((message) => (
         <article
-          key={message.id}
+          key={message.message_id || message.id}
           className={`transcript-message ${
             message.source || "system"
           }`}
