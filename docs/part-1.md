@@ -48,3 +48,15 @@ configuration from availability. Boolean/numeric settings are validated and
 production debug is forced off. HTTP/validation/unhandled errors use a safe error
 object with the legacy `detail` field retained during migration. Request IDs and
 success-envelope alignment follow in the contract checkpoint.
+
+### Dependency audit corrections
+
+The transitive baseline audit also flagged Starlette 0.48.0 and the virtual
+environment's pip 25.0.1. FastAPI must move with Starlette because the old
+FastAPI pin disallows patched Starlette versions. Runtime pins now target
+FastAPI 0.142.2, Starlette 1.7.0, and python-multipart 0.0.31. Test tooling uses
+pytest 9.1.1. HTTPX is a test dependency, not an unused runtime dependency.
+The virtual environment's pip is updated independently; it is not an app API.
+After these corrections, all 31 backend tests passed, `pip check` passed and
+the complete installed-environment `pip-audit` reported no known vulnerabilities.
+`constraints.txt` records the audited Windows/Python 3.12 dependency resolution.
