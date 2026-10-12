@@ -27,18 +27,20 @@ invalid vocabulary does not silently enable a different hard-coded dictionary.
 Keyword aliases are still filtered against the active vocabulary.
 
 The existing text-to-gloss query endpoint accepts an optional context. REST
-message/envelope migration is still pending in this checkpoint.
+messages and envelopes now use the canonical v1 contract; bounded legacy query
+and bare-list inputs remain documented compatibility paths.
 
 ### Verification environment
 
-An ignored backend `.venv` uses the original declared requirements for baseline
-verification. Baseline: 27 backend tests passed; 3 frontend tests passed after
-`npm ci --ignore-scripts --no-audit --no-fund`. No application build was run.
-The first Python audit found advisories in `python-multipart==0.0.20` and
-`pytest==8.4.2`; dependency corrections and a transitive audit remain open.
+An ignored backend `.venv` uses the audited Python 3.12 dependency set. The
+current checkpoint ran 98 backend tests and 7 frontend tests. `npm run build`
+completed with existing Vite module-directive and large-chunk warnings. The
+earlier baseline counts and advisories are historical evidence; the current
+installed environment passes `pip check` and `pip-audit`, and the frontend
+lockfile passes `npm audit --audit-level=high --package-lock-only`.
 
-Other saved Part 1 edits are being reviewed and delivered in subsequent
-checkpoints. This file does not mark the entire part complete.
+The foundation security/upload/docs checkpoint is delivered in `5731f30`.
+This file does not mark the product Phase 1 or the full VOXIS product complete.
 
 ### Honest optional-service status and safe error baseline
 
@@ -46,8 +48,9 @@ Whisper, sign inference, and TTS report disabled (501) or enabled but unavailabl
 (503), never fabricated successful output. Health/capabilities distinguish
 configuration from availability. Boolean/numeric settings are validated and
 production debug is forced off. HTTP/validation/unhandled errors use a safe error
-object with the legacy `detail` field retained during migration. Request IDs and
-success-envelope alignment follow in the contract checkpoint.
+object with the legacy `detail` field retained during migration. Request IDs,
+success envelopes, and frontend compatibility are now part of the current
+contract.
 
 ### Dependency audit corrections
 
@@ -57,9 +60,10 @@ FastAPI pin disallows patched Starlette versions. Runtime pins now target
 FastAPI 0.142.2, Starlette 1.7.0, and python-multipart 0.0.31. Test tooling uses
 pytest 9.1.1. HTTPX is a test dependency, not an unused runtime dependency.
 The virtual environment's pip is updated independently; it is not an app API.
-After these corrections, all 31 backend tests passed, `pip check` passed and
-the complete installed-environment `pip-audit` reported no known vulnerabilities.
-`constraints.txt` records the audited Windows/Python 3.12 dependency resolution.
+At that checkpoint, 31 backend tests passed, `pip check` passed, and the
+complete installed-environment `pip-audit` reported no known vulnerabilities.
+The current 98-test run repeats those checks; `constraints.txt` records the
+audited Windows/Python 3.12 dependency resolution.
 
 ### Canonical message validation
 
@@ -81,7 +85,8 @@ Wire details and bounded legacy inputs are in `docs/api/current-contract.md`.
 ### Bounded HTTP and denied private access
 
 The five previous checkpoints were verified on remote `Swayam` through
-`40e3d89`. The interrupted HTTP edit initially failed 20 tests: old test hosts,
+`40e3d89`, followed by the HTTP checkpoint `11a90b2` and this upload/docs
+checkpoint `5731f30`. The interrupted HTTP edit initially failed 20 tests: old test hosts,
 old socket expectations, and a newly required production origin configuration.
 Tests now use actual allowed hosts and verify the stricter boundary.
 

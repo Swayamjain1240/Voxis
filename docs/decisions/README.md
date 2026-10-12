@@ -22,7 +22,7 @@ Each ADR records:
 | ADR-005 | Mode 1 face-to-face before remote mode | Accepted |
 | ADR-006 | `main`, `swayam`, and `rishi` Git branch strategy | Accepted |
 | ADR-007 | Curated dataset handoff at Phase 4 | Accepted |
-| ADR-008 | REST for request/response, WebSocket for real-time/Mode 2 | Accepted |
+| ADR-008 | REST for request/response, WebSocket for real-time/Mode 2 | Accepted for future Mode 2; disabled in Mode 1 |
 
 ## Status Values
 

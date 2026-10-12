@@ -9,7 +9,8 @@
 
 ## 1. Purpose
 
-WebSocket support is used for real-time communication and later for Mode 2 room-based conversations.
+Future WebSocket support is intended for authenticated Mode 2 room-based
+conversations. It is not used by the current Mode 1 runtime.
 
 Mode 1 should not depend on remote WebSockets unless required by the chosen inference architecture.
 
@@ -19,7 +20,7 @@ Mode 1 should not depend on remote WebSockets unless required by the chosen infe
 
 ## 2. Connection
 
-Development endpoint:
+Future Mode 2 development endpoint (not active):
 
 ```text
 ws://localhost:8000/ws
