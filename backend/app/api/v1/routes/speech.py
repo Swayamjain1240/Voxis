@@ -18,10 +18,12 @@ whisper_service = WhisperService()
 
 @router.get("/capabilities")
 async def capabilities():
+    status = whisper_service.status()
     return {
         "microphone_capture": True,
         "audio_upload": True,
-        "transcription": whisper_service.enabled,
+        "transcription": status["available"],
+        "transcription_status": status["status"],
         "language": "en",
         "phase": 1,
     }

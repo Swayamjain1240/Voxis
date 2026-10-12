@@ -1,11 +1,7 @@
-import time
-
 from app.core.config import settings
 from app.core.exceptions import (
     FeatureNotEnabledError,
-)
-from app.schemas.speech import (
-    TranscriptionResponse,
+    FeatureUnavailableError,
 )
 
 
@@ -20,18 +16,43 @@ class WhisperService:
         Plug local Whisper/faster-whisper behind this interface.
     """
 
-    def __init__(self):
+    def __init__(self, enabled: bool | None = None):
         self.enabled = (
             settings.whisper_enabled
+            if enabled is None
+            else enabled
         )
         self.model = None
+
+    @property
+    def implemented(self) -> bool:
+        return False
+
+    @property
+    def available(self) -> bool:
+        return self.enabled and self.implemented and self.model is not None
+
+    def status(self) -> dict[str, object]:
+        if not self.enabled:
+            state = "disabled"
+        elif not self.implemented:
+            state = "unavailable"
+        else:
+            state = "available" if self.available else "unavailable"
+        return {
+            "enabled": self.enabled,
+            "implemented": self.implemented,
+            "available": self.available,
+            "status": state,
+            "runtime": "not-implemented" if not self.implemented else "pending",
+        }
 
     async def transcribe(
         self,
         audio_bytes: bytes,
         filename: str,
         content_type: str,
-    ) -> TranscriptionResponse:
+    ):
 
         if not self.enabled:
             raise FeatureNotEnabledError(
@@ -39,27 +60,16 @@ class WhisperService:
                 "Phase 2",
             )
 
-        # Keep the interface stable.
-        #
-        # Example future implementation:
-        #
-        # segments, info = self.model.transcribe(...)
-        #
-        # The frontend should not need to change.
-
-        return TranscriptionResponse(
-            text="",
-            language="en",
-            confidence=None,
-            source="whisper",
-            timestamp=int(
-                time.time() * 1000
-            ),
+        raise FeatureUnavailableError(
+            "Whisper transcription",
+            "WHISPER_UNAVAILABLE",
         )
 
     def load(self):
         if not self.enabled:
             return
 
-        # Model initialization belongs here.
-        # Not loaded during Phase 1.
+        raise FeatureUnavailableError(
+            "Whisper transcription",
+            "WHISPER_UNAVAILABLE",
+        )

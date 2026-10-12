@@ -1,9 +1,20 @@
 from fastapi import APIRouter
 
 from app.core.config import settings
+from app.services.sign_recognition.inference import SignInferenceService
+from app.services.speech.whisper_service import WhisperService
+from app.services.tts.tts_service import TTSService
 
 
 router = APIRouter()
+
+whisper_service = WhisperService()
+sign_service = SignInferenceService()
+tts_service = TTSService()
+
+
+def _llm_status() -> str:
+    return "unavailable" if settings.llm_enabled else "deterministic-fallback"
 
 
 @router.get("")
@@ -17,26 +28,10 @@ async def health():
             "api": "ready",
             "speech_capture": "frontend",
             "audio_upload": "ready",
-            "whisper": (
-                "enabled"
-                if settings.whisper_enabled
-                else "phase-2-disabled"
-            ),
-            "text_to_gloss": (
-                "enabled"
-                if settings.llm_enabled
-                else "deterministic-fallback"
-            ),
-            "sign_model": (
-                "enabled"
-                if settings.sign_model_enabled
-                else "phase-3-disabled"
-            ),
-            "tts": (
-                "enabled"
-                if settings.tts_enabled
-                else "phase-5-disabled"
-            ),
+            "whisper": whisper_service.status()["status"],
+            "text_to_gloss": _llm_status(),
+            "sign_model": sign_service.status()["status"],
+            "tts": tts_service.status()["status"],
             "websocket": "ready",
         },
     }

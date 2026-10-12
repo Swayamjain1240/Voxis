@@ -39,3 +39,12 @@ The first Python audit found advisories in `python-multipart==0.0.20` and
 
 Other saved Part 1 edits are being reviewed and delivered in subsequent
 checkpoints. This file does not mark the entire part complete.
+
+### Honest optional-service status and safe error baseline
+
+Whisper, sign inference, and TTS report disabled (501) or enabled but unavailable
+(503), never fabricated successful output. Health/capabilities distinguish
+configuration from availability. Boolean/numeric settings are validated and
+production debug is forced off. HTTP/validation/unhandled errors use a safe error
+object with the legacy `detail` field retained during migration. Request IDs and
+success-envelope alignment follow in the contract checkpoint.

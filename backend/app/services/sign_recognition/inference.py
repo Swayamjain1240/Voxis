@@ -1,8 +1,7 @@
-import time
-
 from app.core.config import settings
 from app.core.exceptions import (
     FeatureNotEnabledError,
+    FeatureUnavailableError,
 )
 
 
@@ -14,16 +13,32 @@ class SignInferenceService:
     It consumes the shared sign-prediction contract instead.
     """
 
-    def __init__(self):
+    def __init__(self, enabled: bool | None = None):
         self.enabled = (
             settings.sign_model_enabled
+            if enabled is None
+            else enabled
         )
 
+    @property
+    def implemented(self) -> bool:
+        return False
+
     def status(self):
+        state = (
+            "disabled"
+            if not self.enabled
+            else "unavailable"
+            if not self.implemented
+            else "available"
+        )
         return {
             "enabled": self.enabled,
+            "implemented": self.implemented,
+            "available": self.enabled and self.implemented,
+            "status": state,
             "model_loaded": False,
-            "runtime": "pending-phase-3",
+            "runtime": "not-implemented",
         }
 
     async def predict(
@@ -36,17 +51,7 @@ class SignInferenceService:
                 "Phase 3",
             )
 
-        frames = payload.get(
-            "frames",
-            []
+        raise FeatureUnavailableError(
+            "Sign recognition",
+            "SIGN_MODEL_UNAVAILABLE",
         )
-
-        return {
-            "glosses": [],
-            "confidence": [],
-            "source": "sign",
-            "timestamp": int(
-                time.time() * 1000
-            ),
-            "frames_received": len(frames),
-        }

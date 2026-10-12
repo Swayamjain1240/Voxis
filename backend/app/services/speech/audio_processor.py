@@ -1,11 +1,13 @@
 from dataclasses import dataclass
 
-from fastapi import (
-    HTTPException,
-    UploadFile,
-)
+from fastapi import UploadFile
 
 from app.core.config import settings
+from app.core.exceptions import (
+    InvalidAudioError,
+    PayloadTooLargeError,
+    UnsupportedMediaTypeError,
+)
 
 
 @dataclass
@@ -35,9 +37,8 @@ async def validate_audio_upload(
     if not content_type.startswith(
         SUPPORTED_AUDIO_PREFIX
     ):
-        raise HTTPException(
-            status_code=415,
-            detail=(
+        raise UnsupportedMediaTypeError(
+            (
                 "Unsupported content type. "
                 "Only audio uploads are accepted."
             ),
@@ -52,19 +53,15 @@ async def validate_audio_upload(
     )
 
     if len(content) > max_bytes:
-        raise HTTPException(
-            status_code=413,
-            detail=(
+        raise PayloadTooLargeError(
+            (
                 "Audio exceeds the configured "
                 f"{settings.max_audio_upload_mb} MB limit."
             ),
         )
 
     if not content:
-        raise HTTPException(
-            status_code=400,
-            detail="Audio file is empty.",
-        )
+        raise InvalidAudioError("Audio file is empty.")
 
     return AudioMetadata(
         filename=filename,

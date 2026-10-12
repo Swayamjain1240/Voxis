@@ -1,10 +1,22 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import (
+    FastAPI,
+    HTTPException,
+    WebSocket,
+    WebSocketDisconnect,
+)
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api.v1.router import api_router
 from app.core.config import settings
 from app.core.cors import configure_cors
+from app.core.exceptions import (
+    http_exception_handler,
+    unhandled_exception_handler,
+    validation_exception_handler,
+)
 from app.core.logging import configure_logging
 from app.websocket.events import build_event
 from app.websocket.manager import connection_manager
@@ -35,8 +47,23 @@ app = FastAPI(
     ),
     docs_url="/docs",
     redoc_url="/redoc",
+    debug=settings.debug,
     lifespan=lifespan,
 )
+
+app.add_exception_handler(
+    RequestValidationError,
+    validation_exception_handler,
+)
+app.add_exception_handler(
+    HTTPException,
+    http_exception_handler,
+)
+app.add_exception_handler(
+    StarletteHTTPException,
+    http_exception_handler,
+)
+app.add_exception_handler(Exception, unhandled_exception_handler)
 
 configure_cors(app)
 
