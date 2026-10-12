@@ -162,7 +162,7 @@ def validation_exception_handler(
             "message": error.get("msg", "Invalid value."),
             "type": error.get("type", "value_error"),
         }
-        for error in exc.errors()
+        for error in exc.errors()[:20]
     ]
     return JSONResponse(
         status_code=422,

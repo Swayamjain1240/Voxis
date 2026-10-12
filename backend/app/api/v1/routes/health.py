@@ -37,7 +37,7 @@ def component_health():
             "text_to_gloss": _llm_status(),
             "sign_model": sign_service.status()["status"],
             "tts": tts_service.status()["status"],
-            "websocket": "ready",
+            "websocket": "disabled",
         },
     }
 

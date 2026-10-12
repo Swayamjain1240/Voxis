@@ -7,7 +7,7 @@ from fastapi.testclient import (
 from app.main import app
 
 
-client = TestClient(app)
+client = TestClient(app, base_url="http://localhost")
 
 
 def test_speech_capabilities():

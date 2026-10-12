@@ -1,132 +1,56 @@
 from contextlib import asynccontextmanager
 
-from fastapi import (
-    FastAPI,
-    HTTPException,
-    Request,
-    WebSocket,
-    WebSocketDisconnect,
-)
+from fastapi import FastAPI, Request, WebSocket
 from fastapi.exceptions import RequestValidationError
-from starlette.exceptions import HTTPException as StarletteHTTPException
+from starlette.exceptions import HTTPException
 
 from app.api.v1.router import api_router
-from app.core.config import settings
-from app.core.cors import configure_cors
-from app.core.exceptions import (
-    http_exception_handler,
-    unhandled_exception_handler,
-    validation_exception_handler,
-)
+from app.core.config import Settings, settings
+from app.core.exceptions import http_exception_handler, unhandled_exception_handler, validation_exception_handler
 from app.core.logging import configure_logging
 from app.core.request_context import RequestContextMiddleware
+from app.core.transport import TransportMiddleware
 from app.schemas.response import success
-from app.websocket.events import build_event
-from app.websocket.manager import connection_manager
-
-
-configure_logging()
 
 
 @asynccontextmanager
-async def lifespan(_app: FastAPI):
+async def lifespan(_app):
     logger = configure_logging()
-    logger.info(
-        "VOXIS backend starting | environment=%s | phase=1",
-        settings.environment,
-    )
-
+    logger.info("VOXIS backend starting | phase=1 | mode=mode-1")
     yield
-
     logger.info("VOXIS backend shutting down")
 
 
-app = FastAPI(
-    title=settings.app_name,
-    version="0.1.0",
-    description=(
-        "Backend for VOXIS: "
-        "two-way Indian Sign Language communication."
-    ),
-    docs_url="/docs",
-    redoc_url="/redoc",
-    debug=settings.debug,
-    lifespan=lifespan,
-)
+def create_app(config: Settings = settings):
+    app = FastAPI(
+        title=config.app_name, version="0.1.0", debug=config.debug,
+        description="VOXIS restricted-vocabulary communication foundation.",
+        docs_url=None, redoc_url=None,
+        openapi_url="/openapi.json" if config.environment in {"development", "test"} else None,
+        lifespan=lifespan,
+    )
+    app.state.settings = config
+    app.add_exception_handler(RequestValidationError, validation_exception_handler)
+    app.add_exception_handler(HTTPException, http_exception_handler)
+    app.add_exception_handler(Exception, unhandled_exception_handler)
+    app.add_middleware(TransportMiddleware, settings=config)
+    app.add_middleware(RequestContextMiddleware)
+    app.include_router(api_router, prefix="/api/v1")
 
-app.add_exception_handler(
-    RequestValidationError,
-    validation_exception_handler,
-)
-app.add_exception_handler(
-    HTTPException,
-    http_exception_handler,
-)
-app.add_exception_handler(
-    StarletteHTTPException,
-    http_exception_handler,
-)
-app.add_exception_handler(Exception, unhandled_exception_handler)
+    @app.get("/", tags=["system"])
+    async def root(request: Request):
+        return success(request, {
+            "name": config.app_name, "status": "running", "phase": 1,
+            "mode": "mode-1", "docs": app.openapi_url,
+        })
 
-configure_cors(app)
-app.add_middleware(RequestContextMiddleware)
+    @app.websocket("/ws")
+    async def websocket_endpoint(websocket: WebSocket):
+        # Mode 1 uses REST. Re-enabling sockets requires a separately reviewed
+        # authenticated/isolated protocol; configuration cannot enable this route.
+        await websocket.close(code=1008, reason="WebSocket transport is disabled.")
 
-app.include_router(
-    api_router,
-    prefix="/api/v1",
-)
+    return app
 
 
-@app.get("/", tags=["system"])
-async def root(request: Request):
-    return success(request, {
-        "name": settings.app_name,
-        "status": "running",
-        "environment": settings.environment,
-        "phase": 1,
-        "mode": "mode-1",
-        "docs": "/docs",
-    })
-
-
-@app.websocket("/ws")
-async def websocket_endpoint(websocket: WebSocket):
-    await connection_manager.connect(websocket)
-
-    try:
-        await websocket.send_json(
-            build_event(
-                "system.ready",
-                {
-                    "message": "VOXIS WebSocket connected",
-                    "mode": "mode-1",
-                },
-            )
-        )
-
-        while True:
-            payload = await websocket.receive_json()
-
-            event_type = payload.get(
-                "type",
-                "conversation.message",
-            )
-
-            event_data = payload.get(
-                "data",
-                payload,
-            )
-
-            await connection_manager.broadcast(
-                build_event(
-                    event_type,
-                    event_data,
-                )
-            )
-
-    except WebSocketDisconnect:
-        connection_manager.disconnect(websocket)
-
-    except Exception:
-        connection_manager.disconnect(websocket)
-        raise
+app = create_app()

@@ -77,3 +77,22 @@ uses JSON language requests. Backend integration tests validate actual responses
 against shared schemas and check invalid inputs. The frontend vocabulary now
 comes from the same shared JSON; transcript keys and JSDoc follow canonical IDs.
 Wire details and bounded legacy inputs are in `docs/api/current-contract.md`.
+
+### Bounded HTTP and denied private access
+
+The five previous checkpoints were verified on remote `Swayam` through
+`40e3d89`. The interrupted HTTP edit initially failed 20 tests: old test hosts,
+old socket expectations, and a newly required production origin configuration.
+Tests now use actual allowed hosts and verify the stricter boundary.
+
+Exact hosts/origins, finite body/peer/concurrency limits, cooperative timeouts,
+safe error headers, metadata-only request logging, HTTPS production checks, and
+deny-by-default private-route dependencies are implemented. `/ws` is closed for
+Mode 1; no configuration flag bypasses that decision. No account system is
+claimed. API security does not substitute for frontend viewport/accessibility
+checks or a production deployment review.
+
+Verification: 92 backend tests pass, including chunked overflow, slow body,
+concurrent request saturation/recovery, permission/ownership denial, CORS,
+production TLS, and safe unexpected errors. Audio content validation and
+removal of unused broadcast helpers follow in the next checkpoint.

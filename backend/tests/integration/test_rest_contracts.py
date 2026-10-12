@@ -9,7 +9,7 @@ from app.main import app
 
 
 def test_conversation_output_matches_shared_contract():
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://localhost") as client:
         response = client.post("/api/v1/conversation/message", json={
             "id": "legacy-1", "source": "speech", "text": "doctor money",
             "context": "bank", "timestamp": 1000,
@@ -27,14 +27,14 @@ def test_conversation_output_matches_shared_contract():
     {"glosses": []}, ["NO_SUCH_SIGN"],
 ])
 def test_invalid_glosses_rejected_at_http_boundary(body):
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://localhost") as client:
         response = client.post("/api/v1/conversation/gloss-to-text", json=body)
     assert response.status_code == 422
     assert response.json()["meta"]["request_id"] == response.headers["x-request-id"]
 
 
 def test_json_and_legacy_gloss_requests_share_validation():
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://localhost") as client:
         for body in ({"glosses": ["HELP"]}, ["HELP"]):
             result = client.post("/api/v1/conversation/gloss-to-text", json=body)
             assert result.status_code == 200
@@ -42,7 +42,7 @@ def test_json_and_legacy_gloss_requests_share_validation():
 
 
 def test_json_text_contract_and_ambiguous_input():
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://localhost") as client:
         result = client.post("/api/v1/conversation/text-to-gloss", json={"text": "help"})
         assert result.json()["data"]["glosses"] == ["HELP"]
         bad = client.post("/api/v1/conversation/text-to-gloss?text=help", json={"text": "pain"})

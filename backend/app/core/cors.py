@@ -1,15 +1,17 @@
-from fastapi.middleware.cors import (
-    CORSMiddleware,
-)
-
-from app.core.config import settings
+"""Exact-origin CORS policy; credentials remain off in no-login Mode 1."""
 
 
-def configure_cors(app):
-    app.add_middleware(
-        CORSMiddleware,
-        allow_origins=settings.cors_origins,
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
-    )
+ALLOWED_METHODS = {"GET", "POST", "OPTIONS"}
+ALLOWED_HEADERS = {"content-type", "x-request-id"}
+
+
+def cors_headers(origin, settings):
+    if origin not in settings.cors_origins:
+        return {}
+    return {
+        "access-control-allow-origin": origin,
+        "vary": "Origin",
+        "access-control-allow-methods": ", ".join(sorted(ALLOWED_METHODS)),
+        "access-control-allow-headers": ", ".join(sorted(ALLOWED_HEADERS)),
+        "access-control-expose-headers": "X-Request-ID, Retry-After",
+    }
