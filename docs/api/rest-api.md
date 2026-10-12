@@ -31,7 +31,7 @@ Response:
   "success": true,
   "data": {
     "status": "ok",
-    "service": "silentsign-api",
+    "service": "voxis-api",
     "version": "0.1.0"
   }
 }

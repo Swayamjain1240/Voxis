@@ -15,7 +15,7 @@ export default function HomePage() {
     <main className="page">
       <section className="hero">
         <div className="hero-copy">
-          <span className="eyebrow">VOXIS / SILENTSIGN</span>
+          <span className="eyebrow">VOXIS / ISL COMMUNICATION</span>
 
           <h1>
             Speech
