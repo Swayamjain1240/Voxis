@@ -105,3 +105,44 @@ safe unexpected errors, and audio content validation. MIME-only/text uploads
 are rejected with bounded reads and integration tests use valid WAV fixtures.
 The historical global broadcast helpers and client socket opener are removed;
 Mode 1 retains a tested disabled transport boundary.
+
+## Final Duck review — Fixing Part 1
+
+**Verdict: DUCK PASS WITH GAPS** at `87ad831`.
+
+The product direction remains on track: VOXIS is described as an assistive,
+restricted-vocabulary Indian Sign Language communication prototype; the original
+hospital/bank/office use cases, two-way directions, privacy boundary, and Mode 1
+first workflow remain visible. Implemented runtime claims are limited to the
+microphone/avatar foundation, deterministic language fallback, validated REST
+contracts, and explicit unavailable/disabled states. The Conversation page and
+sign-side browser pipeline still identify themselves as incomplete rather than
+pretending to be a translator.
+
+The contract and security review found no remaining global broadcast path. REST
+responses, errors, request IDs, vocabulary versions, upload limits, exact hosts
+and origins, security headers, request quotas/timeouts, deny-by-default private
+route dependencies, and disabled WebSocket behavior are consistent across the
+backend, shared schema, frontend adapter, tests, and current API documentation.
+Tracked Python bytecode is now removed, the reachable-history common-pattern
+secret scan is clean, and the CI workflow defines repeatable test/audit/build
+and hygiene gates.
+
+Evidence run for this review:
+
+- `backend/.venv/Scripts/python.exe -B -m pytest -p no:cacheprovider` — **98 passed**;
+- `frontend/npm test -- --run` — **7 passed**;
+- `frontend/npm run build` — completed with existing Vite directive/chunk warnings;
+- `pip check`, installed-environment `pip-audit`, and high-severity npm audit — clean;
+- `git diff --check`, current-tree secret-pattern scan, 23-commit reachable-history
+  common-pattern scan, and tracked-bytecode/private-file checks — clean.
+
+The gaps are intentional next-phase or release evidence: live browser MediaPipe
+and camera-to-buffer integration, trained/evaluated model behavior, Whisper/LLM/
+TTS and real avatar clips, complete two-way conversation UX, browser E2E and
+desktop/tablet/mobile viewport/accessibility checks, a remotely executed CI
+workflow, broader artifact/entropy secret scanning, and production identity,
+privacy, deployment, backup, and operations controls. Pre-existing ML
+preprocessing defects remain documented as corrections required before training.
+Do not advance to Fixing Part 2 under this checkpoint unless that scope is
+explicitly reopened.
