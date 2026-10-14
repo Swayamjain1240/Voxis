@@ -1,8 +1,19 @@
-﻿export class FrameBuffer {
-  constructor(maxLength = 60) {
-    if (!Number.isInteger(maxLength) || maxLength <= 0) {
+import {
+  isCanonicalFrame,
+  FEATURES_PER_FRAME,
+} from "./landmarkExtractor";
+
+export const MAX_SIGN_SEQUENCE_LENGTH = 60;
+
+export class FrameBuffer {
+  constructor(maxLength = MAX_SIGN_SEQUENCE_LENGTH) {
+    if (
+      !Number.isInteger(maxLength) ||
+      maxLength <= 0 ||
+      maxLength > MAX_SIGN_SEQUENCE_LENGTH
+    ) {
       throw new Error(
-        "FrameBuffer maxLength must be a positive integer."
+        `FrameBuffer maxLength must be an integer between 1 and ${MAX_SIGN_SEQUENCE_LENGTH}.`
       );
     }
 
@@ -11,12 +22,15 @@
   }
 
   push(frame) {
-    this.frames.push(frame);
+    if (!isCanonicalFrame(frame)) {
+      throw new Error(
+        `FrameBuffer frames must contain exactly ${FEATURES_PER_FRAME} finite features.`
+      );
+    }
 
-    while (
-      this.frames.length >
-      this.maxLength
-    ) {
+    this.frames.push([...frame]);
+
+    while (this.frames.length > this.maxLength) {
       this.frames.shift();
     }
 
@@ -28,10 +42,7 @@
   }
 
   isFull() {
-    return (
-      this.frames.length >=
-      this.maxLength
-    );
+    return this.frames.length >= this.maxLength;
   }
 
   size() {
@@ -39,6 +50,10 @@
   }
 
   values() {
-    return [...this.frames];
+    return this.frames.map((frame) => [...frame]);
+  }
+
+  sequence() {
+    return this.isFull() ? this.values() : null;
   }
 }
