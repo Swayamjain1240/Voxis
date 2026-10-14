@@ -240,6 +240,20 @@ See [`docs/architecture/system-architecture.md`](docs/architecture/system-archit
 and [`docs/architecture/speech-to-sign.md`](docs/architecture/speech-to-sign.md)
 for target flows and their current-state notes.
 
+## Local environment files
+
+Backend and frontend configuration stay separate:
+
+```text
+backend/.env   # FastAPI-only settings
+frontend/.env  # Vite/browser-only public settings
+```
+
+Copy the committed `.env.example` in each directory when setting up locally.
+Actual `.env` files are ignored and must never be committed. Current VOXIS work
+does not require an API key. Optional MediaPipe model/WASM asset paths are
+public local asset settings, not secrets. See [`docs/environment.md`](docs/environment.md).
+
 ## Repository map
 
 ```text
