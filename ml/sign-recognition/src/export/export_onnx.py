@@ -9,6 +9,7 @@ import torch
 from src.models.transformer import (
     SignTransformer,
 )
+from src.contracts.model_metadata import validate_checkpoint_metadata
 
 
 def main():
@@ -44,10 +45,10 @@ def main():
         weights_only=False,
     )
 
+    metadata = validate_checkpoint_metadata(checkpoint)
+
     model = SignTransformer(
-        input_features=checkpoint[
-            "input_features"
-        ],
+        input_features=metadata.input_features,
         num_classes=len(
             checkpoint["label_map"]
         ),
@@ -63,13 +64,8 @@ def main():
 
     dummy_input = torch.randn(
         1,
-        checkpoint.get(
-            "sequence_length",
-            60,
-        ),
-        checkpoint[
-            "input_features"
-        ],
+            metadata.sequence_length,
+            metadata.input_features,
     )
 
     args.output.parent.mkdir(
@@ -110,6 +106,11 @@ def main():
             ],
             indent=2,
         ),
+        encoding="utf-8",
+    )
+
+    (args.output.parent / "model_metadata.json").write_text(
+        json.dumps(metadata.as_dict(), indent=2),
         encoding="utf-8",
     )
 

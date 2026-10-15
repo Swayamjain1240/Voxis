@@ -16,6 +16,7 @@ from src.datasets.splitter import (
     signer_wise_split,
 )
 from src.contracts.label_map import load_label_map
+from src.contracts.model_metadata import ModelMetadata
 from src.models.transformer import (
     SignTransformer,
 )
@@ -94,6 +95,12 @@ def main():
         ),
     )
 
+    parser.add_argument(
+        "--model-version",
+        required=True,
+        help="Version identifier stored with the checkpoint metadata.",
+    )
+
     args = parser.parse_args()
 
     seed_everything(42)
@@ -107,9 +114,8 @@ def main():
             "Manifest is empty."
         )
 
-    label_map = build_label_map(
-        rows
-    )
+    label_map = build_label_map(rows)
+    metadata = ModelMetadata(model_version=args.model_version)
 
     split = signer_wise_split(
         rows
@@ -209,14 +215,13 @@ def main():
             )
 
             checkpoint = {
+                **metadata.as_dict(),
                 "epoch": epoch,
                 "model_state_dict":
                     model.state_dict(),
                 "optimizer_state_dict":
                     optimizer.state_dict(),
                 "label_map": label_map,
-                "input_features": 300,
-                "sequence_length": 60,
                 "validation_accuracy":
                     best_accuracy,
             }
@@ -244,6 +249,7 @@ def main():
         "test_signers":
             split["test_signers"],
         "label_map": label_map,
+        **metadata.as_dict(),
     }
 
     metadata_path = (

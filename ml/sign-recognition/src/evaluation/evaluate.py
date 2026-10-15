@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 from src.datasets.dataset import (
     SignSequenceDataset,
 )
+from src.datasets.manifest import load_manifest as load_validated_manifest
 from src.evaluation.confusion_matrix import (
     build_confusion_matrix,
     save_confusion_matrix,
@@ -22,19 +23,11 @@ from src.evaluation.metrics import (
 from src.models.transformer import (
     SignTransformer,
 )
+from src.contracts.model_metadata import validate_checkpoint_metadata
 
 
 def load_manifest(path):
-    import csv
-
-    with Path(path).open(
-        "r",
-        encoding="utf-8",
-        newline="",
-    ) as handle:
-        return list(
-            csv.DictReader(handle)
-        )
+    return load_validated_manifest(path)
 
 
 def main():
@@ -79,6 +72,8 @@ def main():
         weights_only=False,
     )
 
+    metadata = validate_checkpoint_metadata(checkpoint)
+
     label_map = checkpoint[
         "label_map"
     ]
@@ -108,9 +103,7 @@ def main():
     )
 
     model = SignTransformer(
-        input_features=checkpoint[
-            "input_features"
-        ],
+        input_features=metadata.input_features,
         num_classes=len(
             label_map
         ),
@@ -206,6 +199,9 @@ def main():
             len(targets),
         "confusion_matrix":
             matrix.tolist(),
+        "model_version": metadata.model_version,
+        "vocabulary_version": metadata.vocabulary_version,
+        "preprocessing_version": metadata.preprocessing_version,
     }
 
     args.output.parent.mkdir(
