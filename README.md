@@ -9,9 +9,9 @@ is retained only where it helps explain repository history or compatibility.
 ## Current status at a glance
 
 This repository is at the **Phase 1 foundation** stage. It is not yet a
-complete two-way sign-language translator. The current source supports a small
-local foundation slice and several explicit service boundaries; the end-to-end
-AI pipelines are still planned work.
+complete two-way sign-language translator. The current source supports the
+local microphone/avatar foundation and an asset-gated camera-to-sequence input
+foundation; the end-to-end AI pipelines are still planned work.
 
 The status labels used in this README and the phase/architecture documents are:
 
@@ -29,7 +29,7 @@ The status labels used in this README and the phase/architecture documents are:
 | Frontend shell and routes | **Implemented (source)** | React/Vite pages for Home, Conversation, and Debug are present. |
 | Microphone foundation | **Implemented (source)** | The Home page requests microphone permission, records with `MediaRecorder`, stops tracks, and offers a local audio preview/blob. |
 | Avatar foundation | **Implemented (source)** | A procedural Three.js avatar renders idle/wave/sign gestures. An optional GLB URL boundary exists, but a production sign-animation library is not present. |
-| Camera/sign input | **Partial / scaffold** | The Conversation route requests camera permission, shows local video and landmarks, runs the configured MediaPipe Holistic Landmarker adapter, and buffers up to 60 canonical frames. Model/WASM asset paths are optional and the sign model is not enabled. |
+| Camera/sign input | **Implemented (source, asset-gated)** | The Conversation route requests camera permission, shows local video and landmarks, runs the configured MediaPipe Holistic Landmarker adapter, buffers a validated 60-frame canonical sequence, and offers local JSON export. Model/WASM asset paths are optional and the sign model is not enabled. |
 | Backend foundation | **Partial / scaffold** | FastAPI health/readiness routes, exact host/origin policy, bounded/content-validated audio upload, typed REST models, request limits, security headers, and an explicitly disabled WebSocket boundary exist. They do not constitute the completed translation pipelines. |
 | Speech recognition | **Planned** | Whisper/faster-whisper is represented by a disabled service boundary. Audio capture/upload is not transcription. |
 | Sign recognition | **Planned** | ML extraction/preprocessing/model helpers and a disabled backend inference boundary exist, but no trained or loaded model is part of the current runtime. |
@@ -37,11 +37,12 @@ The status labels used in this README and the phase/architecture documents are:
 | Conversation experience | **Partial / scaffold** | Context selection, turn state, transcript/gloss display, clear/reset, camera foundation, and honest microphone/upload states are connected; translation directions are not end to end. |
 | Remote communication | **Deferred / not applicable** | Mode 2 rooms, QR/room joining, and remote media/landmark exchange are deliberately disabled. |
 
-**Overall Phase 1 status: in progress / partial.** The speech/avatar slice is
-usable as a foundation demo, but the Phase 1 definition of done also requires
-`camera → live landmarks → buffered sequence`; that sign-side flow is not yet
-complete. See [`docs/phases/phase-1.md`](docs/phases/phase-1.md) for the detailed
-evidence-based status.
+**Overall Phase 1 status: source foundation implemented / runtime verification
+pending.** The speech/avatar slice is usable as a foundation demo and the
+`camera → live landmarks → buffered sequence` flow is wired in the Conversation
+route. A live browser run still requires local public MediaPipe assets and
+manual/E2E verification. See [`docs/phases/phase-1.md`](docs/phases/phase-1.md)
+for the detailed evidence-based status.
 
 ## Fixed-vocabulary limitation
 
@@ -99,8 +100,9 @@ Camera → browser MediaPipe landmarks → 60-frame sequence
 ```
 
 Camera lifecycle helpers, landmark contracts, a configured Tasks Vision adapter,
-and a bounded capture loop are present in the Conversation route. A trained
-sign model, confidence policy, and complete translation route are still planned.
+a bounded capture loop, user-facing states, and local sequence export are
+present in the Conversation route. A trained sign model, confidence policy,
+and complete translation route are still planned.
 
 ### Speech → transcript → signing avatar direction
 
@@ -275,7 +277,7 @@ Dataset provenance and licensing remain an open part of the data work.
 | Phase | Status | Scope |
 | --- | --- | --- |
 | Phase 0 — Dataset and vocabulary | **Conditional foundation** | Audit notes and the 12-label shared vocabulary exist; final license verification and the later 30–50 target remain open. |
-| Phase 1 — Input foundation | **In progress / partial** | Microphone capture and procedural avatar foundation are source-backed; the browser camera-to-landmark buffer path is scaffolded but incomplete. |
+| Phase 1 — Input foundation | **Source foundation implemented / runtime verification pending** | Microphone capture, procedural avatar rendering, and the asset-gated browser camera-to-landmark sequence path are source-backed; trained inference and complete translation remain later work. |
 | Phase 2 — Data and speech preparation | **Planned** | Reproducible preprocessing, signer-aware manifests, and real Whisper transcription. |
 | Phase 3 — AI core | **Planned** | Trained/evaluated fixed-vocabulary model and restricted language conversion. |
 | Phase 4 — Live recognition and avatar clips | **Planned** | Runtime model loading, confidence/rejection behavior, and real sign animation assets. |
@@ -303,7 +305,7 @@ review are future or not applicable to this foundation. The full register is in
 
 The current checkpoint has been verified with `backend/.venv/Scripts/python.exe
 -B -m pytest -p no:cacheprovider` (**98 passed**) and `npm test -- --run`
-(**18 passed**). `npm run build` also completed; Vite reported its existing
+(**25 passed**). `npm run build` also completed; Vite reported its existing
 module-directive and large-chunk warnings. Earlier dependency checks recorded
 clean `pip check`, `pip-audit`, and npm audit results. These checks do not prove
 translation accuracy, latency, privacy compliance, penetration resistance,
