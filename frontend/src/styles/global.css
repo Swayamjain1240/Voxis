@@ -572,7 +572,127 @@ a {
 
 .conversation-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.context-section {
+  display: grid;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.section-heading h2 {
+  margin: 5px 0 0;
+  font-size: 18px;
+}
+
+.mode-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.context-note,
+.muted-state,
+.foundation-notice,
+.foundation-error,
+.foundation-success {
+  margin: 0;
+  color: #84909e;
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.foundation-error {
+  color: #ff9b9b;
+}
+
+.foundation-success {
+  color: #8ce0ae;
+}
+
+.sign-input-panel,
+.conversation-panel {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.camera-stage {
+  position: relative;
+  min-height: 300px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  background: #080b10;
+}
+
+.camera-empty {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  min-height: 300px;
+  padding: 28px;
+  color: #84909e;
+  text-align: center;
+}
+
+.camera-empty strong {
+  color: #e1e7ef;
+}
+
+.camera-empty span {
+  max-width: 280px;
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.capture-controls,
+.capture-meta,
+.state-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.capture-controls {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.capture-meta {
+  color: #778291;
+  font-size: 10px;
+}
+
+.button {
+  min-height: 34px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  color: #e8edf3;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.button.primary {
+  background: #edf2f7;
+  color: #06080c;
+}
+
+.button.secondary {
+  background: #121823;
+}
+
+.gloss-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-height: 32px;
+  align-items: center;
 }
 
 .turn-indicator {
@@ -914,7 +1034,8 @@ a {
 
 @media (max-width: 1000px) {
   .workspace,
-  .debug-grid {
+  .debug-grid,
+  .conversation-layout {
     grid-template-columns: 1fr;
   }
 
@@ -960,5 +1081,15 @@ a {
 
   .architecture-strip {
     grid-template-columns: 1fr;
+  }
+
+  .mode-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .capture-meta,
+  .state-header {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }
