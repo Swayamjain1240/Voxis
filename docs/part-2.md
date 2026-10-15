@@ -37,6 +37,21 @@ of pretending that landmark inference is active.
   states are user-visible and safe.
 - Backend/frontend `.env` files remain untracked; examples contain no secrets.
 
+## Implementation checkpoints
+
+Part 2 is being delivered as coherent pushed checkpoints on `Swayam`:
+
+1. `81d27f3` — separate environment boundary and public asset configuration;
+2. `705f30c` — canonical 75-landmark/300-feature frame contract and buffer;
+3. `f735675` — Tasks Vision Holistic Landmarker adapter and dependency;
+4. `ab3ffb6` — camera lifecycle, video ref, and capture loop;
+5. `1b6bf92` — context/conversation foundation screen;
+6. `c3a8993` — honest microphone upload validation flow.
+
+No API key or provider was introduced. The optional MediaPipe model and WASM
+paths are public/local assets; with blank paths, the app intentionally shows a
+camera preview and `not_configured` rather than claiming landmark inference.
+
 Fixing Part 2 is complete only after its implementation tests, frontend tests,
 build, documentation, and Duck review pass. Part 3 must wait for an explicit
 user command.

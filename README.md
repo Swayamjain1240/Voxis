@@ -29,12 +29,12 @@ The status labels used in this README and the phase/architecture documents are:
 | Frontend shell and routes | **Implemented (source)** | React/Vite pages for Home, Conversation, and Debug are present. |
 | Microphone foundation | **Implemented (source)** | The Home page requests microphone permission, records with `MediaRecorder`, stops tracks, and offers a local audio preview/blob. |
 | Avatar foundation | **Implemented (source)** | A procedural Three.js avatar renders idle/wave/sign gestures. An optional GLB URL boundary exists, but a production sign-animation library is not present. |
-| Camera/sign input | **Partial / scaffold** | Camera lifecycle, video, overlay, normalization helpers, and a bounded frame-buffer utility exist. The current `useMediaPipe` hook is an adapter stub, the sign input is not mounted in the current routes, and there is no live browser MediaPipe pipeline. |
+| Camera/sign input | **Partial / scaffold** | The Conversation route requests camera permission, shows local video and landmarks, runs the configured MediaPipe Holistic Landmarker adapter, and buffers up to 60 canonical frames. Model/WASM asset paths are optional and the sign model is not enabled. |
 | Backend foundation | **Partial / scaffold** | FastAPI health/readiness routes, exact host/origin policy, bounded/content-validated audio upload, typed REST models, request limits, security headers, and an explicitly disabled WebSocket boundary exist. They do not constitute the completed translation pipelines. |
 | Speech recognition | **Planned** | Whisper/faster-whisper is represented by a disabled service boundary. Audio capture/upload is not transcription. |
 | Sign recognition | **Planned** | ML extraction/preprocessing/model helpers and a disabled backend inference boundary exist, but no trained or loaded model is part of the current runtime. |
 | Language and speech output | **Partial / scaffold** | A deterministic, vocabulary-constrained keyword/template fallback exists. LLM-backed conversion and TTS are not integrated. |
-| Conversation experience | **Partial / scaffold** | Conversation state/components and a placeholder screen exist; the two translation directions are not connected end to end. |
+| Conversation experience | **Partial / scaffold** | Context selection, turn state, transcript/gloss display, clear/reset, camera foundation, and honest microphone/upload states are connected; translation directions are not end to end. |
 | Remote communication | **Deferred / not applicable** | Mode 2 rooms, QR/room joining, and remote media/landmark exchange are deliberately disabled. |
 
 **Overall Phase 1 status: in progress / partial.** The speech/avatar slice is

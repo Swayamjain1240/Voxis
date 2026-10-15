@@ -4,10 +4,10 @@
 
 **Overall status: In progress / partial.**
 
-This phase has a source-backed microphone/avatar foundation and a partial
-camera/sign-input scaffold. It does **not** yet meet the full Phase 1
-definition of done because the browser camera → MediaPipe → buffered landmark
-path is not connected end to end.
+This phase has a source-backed microphone/avatar foundation and a connected
+browser capture foundation. It does **not** yet meet the complete product
+definition of done because no trained sign model, Whisper pipeline, or full
+translation flow is active.
 
 The status below is source-backed and is supplemented by the current checks in
 `docs/part-1.md`; it does not claim that the full product flow is complete.
@@ -18,8 +18,8 @@ security/architecture status register.
 | --- | --- | --- |
 | Speech input foundation | **Implemented (source)** | `useMicrophone`, audio recorder, permission/error states, track cleanup, and local audio Blob preview are used by the Home page. |
 | Avatar foundation | **Implemented (source)** | A procedural Three.js avatar renders idle/wave/sign gestures; a GLB loading boundary exists behind an environment URL. |
-| Sign input foundation | **Partial / scaffold** | Camera lifecycle, video component, landmark overlay, normalization helpers, and `FrameBuffer` exist. |
-| Browser MediaPipe processing | **Partial / scaffold** | `useMediaPipe` is an adapter boundary; its initializer does not create a MediaPipe processor and no current route mounts the sign-input flow. |
+| Sign input foundation | **Partial / scaffold** | Conversation route mounts camera lifecycle, video, landmark overlay, canonical normalization, and bounded `FrameBuffer`; model prediction remains disabled. |
+| Browser MediaPipe processing | **Partial / scaffold** | `useMediaPipe` creates a configured Tasks Vision Holistic Landmarker when local model/WASM paths are supplied; blank paths remain an explicit `not_configured` state. |
 | Shared vocabulary/contracts | **Implemented (source/docs)** | The versioned 12-gloss vocabulary, label map, contexts, and JSON contracts exist. |
 | Backend connection | **Partial / scaffold** | Health, bounded/content-validated audio upload, typed REST contracts, security limits, and a disabled WebSocket boundary exist; Whisper and sign inference are disabled by default. |
 
