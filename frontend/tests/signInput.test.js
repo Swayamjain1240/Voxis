@@ -12,6 +12,10 @@ import {
   isCanonicalSequence,
   sequenceProgress,
 } from "../src/features/sign-input/services/sequence.js";
+import {
+  SEQUENCE_SCHEMA_VERSION,
+  serializeSequence,
+} from "../src/features/sign-input/services/sequenceExport.js";
 
 function frame(value = 0) {
   return Array.from({ length: FEATURES_PER_FRAME }, () => value);
@@ -79,5 +83,25 @@ describe("canonical sequence contract", () => {
       ready: false,
     });
     expect(sequenceProgress(100, 3).ready).toBe(true);
+  });
+});
+
+describe("local sequence export", () => {
+  it("serializes the canonical shape with versioned debug metadata", () => {
+    const payload = JSON.parse(
+      serializeSequence(Array.from({ length: 60 }, () => frame(1)), {
+        capturedAt: "2026-01-01T00:00:00.000Z",
+      })
+    );
+
+    expect(payload.schema_version).toBe(SEQUENCE_SCHEMA_VERSION);
+    expect(payload.sequence_length).toBe(60);
+    expect(payload.features_per_frame).toBe(300);
+    expect(payload.captured_at).toBe("2026-01-01T00:00:00.000Z");
+    expect(payload.frames).toHaveLength(60);
+  });
+
+  it("refuses incomplete exports", () => {
+    expect(() => serializeSequence([])).toThrow(/complete 60-frame/);
   });
 });

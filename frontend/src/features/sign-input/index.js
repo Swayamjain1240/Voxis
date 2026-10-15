@@ -27,3 +27,8 @@ export {
   isCanonicalSequence,
   sequenceProgress,
 } from "./services/sequence";
+export {
+  SEQUENCE_SCHEMA_VERSION,
+  serializeSequence,
+  downloadSequence,
+} from "./services/sequenceExport";

@@ -4,11 +4,24 @@ import useSignCapture from "../hooks/useSignCapture";
 import CameraFeed from "./CameraFeed";
 import LandmarkOverlay from "./LandmarkOverlay";
 import SignStatus from "./SignStatus";
+import { downloadSequence } from "../services/sequenceExport";
 
 export default function SignInputPanel() {
   const capture = useSignCapture();
   const { camera, mediaPipe } = capture;
   const isActive = camera.isActive;
+  const [downloadStatus, setDownloadStatus] = React.useState("");
+
+  const handleDownload = () => {
+    try {
+      const filename = downloadSequence(capture.sequence);
+      setDownloadStatus(`Downloaded ${filename}`);
+    } catch (downloadError) {
+      setDownloadStatus(
+        downloadError?.message || "The sequence could not be downloaded."
+      );
+    }
+  };
 
   return (
     <section className="panel sign-input-panel" aria-labelledby="sign-input-title">
@@ -50,6 +63,14 @@ export default function SignInputPanel() {
         >
           Clear frames
         </button>
+        <button
+          type="button"
+          className="button secondary"
+          onClick={handleDownload}
+          disabled={!capture.sequence}
+        >
+          Download sequence
+        </button>
       </div>
 
       <div className="capture-meta">
@@ -59,10 +80,18 @@ export default function SignInputPanel() {
 
       {camera.error && <p className="foundation-error">{camera.error}</p>}
       {mediaPipe.error && <p className="foundation-notice">{mediaPipe.error}</p>}
+      {capture.captureError && (
+        <p className="foundation-error">{capture.captureError}</p>
+      )}
+      {downloadStatus && (
+        <p className="foundation-notice" role="status">
+          {downloadStatus}
+        </p>
+      )}
       {capture.sequence && (
         <p className="foundation-success">
-          A complete 60-frame sequence is buffered locally. Sign prediction is
-          not enabled in Fixing Part 2.
+          A complete 60-frame sequence is buffered locally and ready to
+          download. Sign prediction is not enabled in Phase 1.
         </p>
       )}
     </section>
