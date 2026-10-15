@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from collections import defaultdict
 
+from src.datasets.manifest import duplicate_key, validate_manifest_rows
+
 
 def signer_wise_split(
     rows: list[dict],
@@ -9,6 +11,8 @@ def signer_wise_split(
     validation_ratio: float = 0.15,
     test_ratio: float = 0.15,
 ) -> dict[str, list[dict]]:
+
+    rows = validate_manifest_rows(rows)
 
     total_ratio = (
         train_ratio
@@ -82,9 +86,7 @@ def signer_wise_split(
         train_count + validation_count:
     ]
 
-    def collect(
-        selected_signers
-    ):
+    def collect(selected_signers):
         return [
             row
             for signer in selected_signers
@@ -93,7 +95,7 @@ def signer_wise_split(
             ]
         ]
 
-    return {
+    split = {
         "train": collect(
             train_signers
         ),
@@ -108,3 +110,14 @@ def signer_wise_split(
             validation_signers,
         "test_signers": test_signers,
     }
+
+    duplicate_splits: dict[str, set[str]] = defaultdict(set)
+    for name in ("train", "validation", "test"):
+        for row in split[name]:
+            duplicate_splits[duplicate_key(row)].add(name)
+    leaked = {
+        key: names for key, names in duplicate_splits.items() if len(names) > 1
+    }
+    if leaked:
+        raise ValueError(f"Duplicate groups cross dataset splits: {sorted(leaked)}")
+    return split

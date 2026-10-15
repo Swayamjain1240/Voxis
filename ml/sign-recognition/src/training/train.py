@@ -10,9 +10,8 @@ import torch
 from torch import nn
 from torch.utils.data import DataLoader
 
-from src.datasets.dataset import (
-    SignSequenceDataset,
-)
+from src.datasets.dataset import SignSequenceDataset
+from src.datasets.manifest import load_manifest as load_validated_manifest
 from src.datasets.splitter import (
     signer_wise_split,
 )
@@ -38,19 +37,8 @@ def seed_everything(
         )
 
 
-def load_manifest(
-    path: Path,
-):
-    import csv
-
-    with path.open(
-        "r",
-        encoding="utf-8",
-        newline="",
-    ) as handle:
-        return list(
-            csv.DictReader(handle)
-        )
+def load_manifest(path: Path):
+    return load_validated_manifest(path)
 
 
 def build_label_map(rows: list[dict]):

@@ -29,7 +29,7 @@ artifacts/reports/*
 
 # Large datasets
 data/
-datasets/
+/datasets/
 *.zip
 *.tar
 *.tar.gz
