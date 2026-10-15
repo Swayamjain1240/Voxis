@@ -1,4 +1,5 @@
 import numpy as np
+import pytest
 
 from src.preprocessing.missing_landmarks import (
     clean_landmarks,
@@ -12,6 +13,8 @@ from src.preprocessing.normalize import (
     normalize_landmarks,
 )
 from src.preprocessing.missing_landmarks import interpolate_temporal_gaps
+from src.preprocessing.augmentation import augment_sequence
+from src.preprocessing.config import PreprocessingConfig
 
 
 def test_sequence_prepare():
@@ -106,3 +109,31 @@ def test_invalid_values_cleaned():
     assert np.isfinite(
         result
     ).all()
+
+
+def test_preprocessing_config_rejects_empty_or_wrong_feature_inputs():
+    config = PreprocessingConfig()
+
+    with pytest.raises(ValueError, match="at least one frame"):
+        config.validate_input(np.zeros((0, 300), dtype=np.float32))
+    with pytest.raises(ValueError, match="300"):
+        config.validate_input(np.zeros((5, 299), dtype=np.float32))
+
+
+def test_augmentation_is_reproducible_with_a_seed():
+    sequence = np.ones((8, 300), dtype=np.float32)
+    first = augment_sequence(sequence, seed=7)
+    second = augment_sequence(sequence, seed=7)
+
+    assert np.array_equal(first, second)
+
+
+def test_preprocessing_config_validates_prepared_output():
+    config = PreprocessingConfig()
+    valid = np.zeros((60, 300), dtype=np.float32)
+    assert config.validate_output(valid).shape == (60, 300)
+
+    invalid = valid.copy()
+    invalid[0, 0] = np.nan
+    with pytest.raises(ValueError, match="finite"):
+        config.validate_output(invalid)

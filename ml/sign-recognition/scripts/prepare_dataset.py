@@ -1,12 +1,17 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 from pathlib import Path
 
 import numpy as np
 
 from src.preprocessing.augmentation import (
     augment_sequence,
+)
+from src.preprocessing.config import (
+    DEFAULT_AUGMENTATION_SEED,
+    PreprocessingConfig,
 )
 from src.preprocessing.missing_landmarks import (
     clean_landmarks,
@@ -24,10 +29,14 @@ def process_file(
     destination: Path,
     sequence_length: int,
     augment: bool,
+    seed: int = DEFAULT_AUGMENTATION_SEED,
+    config: PreprocessingConfig | None = None,
 ):
-    sequence = np.load(
-        source
-    ).astype(np.float32)
+    config = config or PreprocessingConfig(
+        target_sequence_length=sequence_length,
+        augmentation_seed=seed,
+    )
+    sequence = config.validate_input(np.load(source, allow_pickle=False))
 
     sequence = clean_landmarks(
         sequence
@@ -39,13 +48,15 @@ def process_file(
 
     if augment:
         sequence = augment_sequence(
-            sequence
+            sequence,
+            seed=seed,
         )
 
     sequence = prepare_sequence(
         sequence,
         sequence_length,
     )
+    sequence = config.validate_output(sequence)
 
     destination.parent.mkdir(
         parents=True,
@@ -90,6 +101,13 @@ def main():
         action="store_true",
     )
 
+    parser.add_argument(
+        "--seed",
+        type=int,
+        default=DEFAULT_AUGMENTATION_SEED,
+        help="Stable seed used when augmentation is enabled.",
+    )
+
     args = parser.parse_args()
 
     files = sorted(
@@ -121,6 +139,7 @@ def main():
             destination,
             args.sequence_length,
             args.augment,
+            seed=args.seed,
         )
 
         print(
