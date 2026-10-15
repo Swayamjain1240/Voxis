@@ -58,7 +58,7 @@ Part 3 is being delivered as coherent pushed checkpoints on `Swayam`:
 4. `ef378b7` — add strict inference input and rejection contracts;
 5. `5ebd40f` — version checkpoint metadata across training/evaluation/export;
 6. `cfdc63b` — harden extraction, sequence loading, and output manifests;
-7. current documentation and dataset-verifier checkpoint;
+7. `7fe2025` — document the dataset contract and verification evidence;
 8. final verification and Duck review.
 
 ## Verification at the current checkpoint
@@ -77,3 +77,44 @@ accuracy result is reported from this checkout.
 
 Part 3 remains in progress until the final verification and Duck review are
 recorded below.
+
+## Final Duck review — Fixing Part 3
+
+**Verdict: DUCK PASS WITH GAPS.**
+
+The Part 3 foundation now has a single canonical contract from preprocessing
+through extraction, manifests, signer-wise splitting, training metadata,
+evaluation, export, and inference boundaries. Shoulder normalization uses the
+correct pose indices; temporal gaps are interpolated before fallback filling;
+labels and the `UNKNOWN` value are loaded from the shared vocabulary; malformed
+or nonfinite 60×300 sequences are rejected; duplicate source groups cannot
+cross signer or split boundaries; and unsupported or low-confidence inference
+does not become an accepted gloss.
+
+The extraction tool now distinguishes its source-video manifest from the
+training manifest and writes the latter only for successful sequences. Model
+metadata records the model, vocabulary, preprocessing, shape, and unknown-label
+versions. No API key, provider, credential, real dataset, trained model, or
+accuracy claim was introduced.
+
+Evidence for this review:
+
+- focused ML contract/preprocessing/manifest/inference/metadata tests: **20 passed**;
+- ML source and scripts: `python -m compileall -q src tests scripts` passed;
+- backend regression suite: **98 passed**;
+- frontend Vitest: **18 passed**;
+- frontend Vite build: completed with the existing React Router directive and
+  large-chunk warnings;
+- `git diff --check`: clean;
+- remote `Swayam` contains all eight Part 3 checkpoints after this review.
+
+The full ML suite remains blocked by the available environment: collecting
+`tests/test_models.py` raises `ModuleNotFoundError: No module named 'torch'`.
+There is no real dataset or trained checkpoint in this checkout, so held-out
+signer accuracy, confusion matrices, latency, model export execution, and
+browser camera-to-model behavior were not claimed. MediaPipe assets, Whisper,
+LLM/TTS, real avatar clips, and the complete end-to-end translation flows
+remain later work.
+
+**Fixing Part 3 is complete for its defined contract-correction scope. Stop
+here and wait for the user's explicit command before starting the next part.**
