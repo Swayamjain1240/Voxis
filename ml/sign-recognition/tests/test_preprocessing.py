@@ -15,6 +15,7 @@ from src.preprocessing.normalize import (
 from src.preprocessing.missing_landmarks import interpolate_temporal_gaps
 from src.preprocessing.augmentation import augment_sequence
 from src.preprocessing.config import PreprocessingConfig
+from scripts.prepare_dataset import prepare_manifest, stable_sample_seed
 
 
 def test_sequence_prepare():
@@ -137,3 +138,33 @@ def test_preprocessing_config_validates_prepared_output():
     invalid[0, 0] = np.nan
     with pytest.raises(ValueError, match="finite"):
         config.validate_output(invalid)
+
+
+def test_manifest_preparation_is_reproducible_and_writes_training_manifest(tmp_path):
+    source = tmp_path / "raw" / "PAIN" / "signer-1" / "sample-1.npy"
+    source.parent.mkdir(parents=True)
+    np.save(source, np.ones((30, 300), dtype=np.float32))
+    manifest = tmp_path / "input.csv"
+    manifest.write_text(
+        "sample_id,sequence_path,label,signer_id\n"
+        f"sample-1,{source},PAIN,signer-1\n",
+        encoding="utf-8",
+    )
+    output = tmp_path / "processed"
+    output_manifest = output / "manifest.csv"
+
+    rows = prepare_manifest(
+        manifest,
+        None,
+        output,
+        output_manifest,
+        sequence_length=60,
+        augment=True,
+        seed=7,
+    )
+
+    prepared = np.load(rows[0]["sequence_path"], allow_pickle=False)
+    assert prepared.shape == (60, 300)
+    assert rows[0]["preprocessing_version"] == "1.0.0"
+    assert int(rows[0]["augmentation_seed"]) == stable_sample_seed(7, "sample-1")
+    assert output_manifest.exists()
