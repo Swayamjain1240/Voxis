@@ -6,8 +6,11 @@ from pathlib import Path
 
 import numpy as np
 
+from src.contracts.label_map import load_label_map
+from src.contracts.sign_input import FEATURES_PER_FRAME, SEQUENCE_LENGTH, validate_sequence
 
-EXPECTED_FEATURES = 300
+
+EXPECTED_FEATURES = FEATURES_PER_FRAME
 
 
 def main():
@@ -24,7 +27,7 @@ def main():
     parser.add_argument(
         "--sequence-length",
         type=int,
-        default=60,
+        default=SEQUENCE_LENGTH,
     )
 
     args = parser.parse_args()
@@ -43,23 +46,28 @@ def main():
 
     label_counts = Counter()
     signer_counts = Counter()
+    label_map = load_label_map()
 
     for path in files:
         try:
             sequence = np.load(
-                path
+                path,
+                allow_pickle=False,
             )
 
-            if sequence.shape != (
-                args.sequence_length,
-                EXPECTED_FEATURES,
-            ):
-                raise ValueError(
-                    f"shape={sequence.shape}"
-                )
+            validate_sequence(
+                sequence,
+                sequence_length=args.sequence_length,
+                features_per_frame=EXPECTED_FEATURES,
+            )
 
             label = path.parent.parent.name
             signer = path.parent.name
+
+            if label.upper() not in label_map.gloss_to_label:
+                raise ValueError(f"unknown canonical label={label}")
+            if not signer or signer.casefold() == "unknown":
+                raise ValueError("known signer_id is required")
 
             label_counts[label] += 1
             signer_counts[signer] += 1
@@ -108,6 +116,9 @@ def main():
         print(
             f"  {signer}: {count}"
         )
+
+    if invalid:
+        raise SystemExit(1)
 
 
 if __name__ == "__main__":

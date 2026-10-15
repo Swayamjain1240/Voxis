@@ -3,6 +3,14 @@ dataset:
   root: ../../data/raw
   manifest: ../../data/manifests/dataset_registry.csv
   processed_root: ../../data/processed/sign-recognition
+  manifest_schema_version: 1.0.0
+  manifest_required_columns:
+    - sample_id
+    - sequence_path
+    - label
+    - signer_id
+  unknown_signer_allowed: false
+  duplicate_groups_must_stay_within_signer: true
 
 landmarks:
   left_hand_points: 21
@@ -21,6 +29,7 @@ landmarks:
 
 sequence:
   length: 60
+  features_per_frame: 300
   padding: repeat_last
   sampling: linear
 
