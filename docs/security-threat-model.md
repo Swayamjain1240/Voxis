@@ -80,11 +80,11 @@ document.
 
 | Original numbering | Original controls retained | Status | Evidence and next step |
 | --- | --- | --- | --- |
-| 20 | Coherent test, diff, commit, and push checkpoints | **Implemented (source + checked)** | Each completed foundation checkpoint was tested, diff-checked, committed, and pushed to `Swayam`; latest verified remote commit is `0da8a7c`. |
+| 20 | Coherent test, diff, commit, and push checkpoints | **Implemented (source + checked)** | Part 1 and the seven completed Part 2 checkpoints were tested, diff-checked, committed, and pushed to `Swayam`; the current Part 2 verification includes 98 backend and 18 frontend tests. |
 | 21 | Continuous security | **Implemented (source)** | `.github/workflows/ci.yml` runs tests, dependency audits, tracked-file hygiene, and a reachable-history common-pattern scan; production monitoring/release review remain future work. |
 | 22 | External API disclosure | **Implemented (source/docs)** | No AI/provider API was introduced; prior development dependency disclosures are recorded in the task evidence. Re-disclose before any provider is added. |
-| 23 | Test every feature | **Partial** | Backend contract/security tests and frontend adapter tests exist; camera, browser capture, responsive screens, and future models still need their own tests. |
-| 24 | Synchronized documentation | **Partial** | Current contract, Part 1 progress, ADRs, README, and this register are being synchronized; historical target docs still require a final wording sweep. |
+| 23 | Test every feature | **Partial** | Backend contract/security tests and 18 frontend tests cover the canonical frame/buffer contract, MediaPipe mapping, camera error messages, recorder boundary, upload adapter, local conversation state, and disabled transport. Browser permission/E2E, responsive accessibility, and future models still need their own checks. |
+| 24 | Synchronized documentation | **Partial** | Current contract, Part 1/Part 2 progress, environment guide, ADRs, README, and this register are synchronized for the current foundation; historical target docs remain future-design references. |
 | 25 | One-viewport authenticated screens | **Deferred / not applicable** | No authenticated screens exist in the no-login Mode 1 foundation. When screens are built, use routes/wizards/pagination rather than hidden overflow and verify desktop/tablet/mobile. |
 
 ### Controls 26–40 — application, API, and applicable security standards

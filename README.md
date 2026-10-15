@@ -98,9 +98,9 @@ Camera → browser MediaPipe landmarks → 60-frame sequence
        → captions and optional speech
 ```
 
-Camera lifecycle helpers, landmark contracts, and preprocessing scaffolding are
-present. A live browser MediaPipe processor, trained model, confidence policy,
-and complete route are still planned.
+Camera lifecycle helpers, landmark contracts, a configured Tasks Vision adapter,
+and a bounded capture loop are present in the Conversation route. A trained
+sign model, confidence policy, and complete translation route are still planned.
 
 ### Speech → transcript → signing avatar direction
 
@@ -151,7 +151,7 @@ Clear the local session when finished
 ```
 
 The current routes provide the application shell, Home microphone/avatar
-foundation, Conversation placeholder, and Debug surface. The complete
+foundation, a Conversation foundation screen, and Debug surface. The complete
 camera-to-gloss and speech-to-avatar journey is not connected yet.
 
 ## Demonstration scenario (target, not current capability)
@@ -303,7 +303,7 @@ review are future or not applicable to this foundation. The full register is in
 
 The current checkpoint has been verified with `backend/.venv/Scripts/python.exe
 -B -m pytest -p no:cacheprovider` (**98 passed**) and `npm test -- --run`
-(**7 passed**). `npm run build` also completed; Vite reported its existing
+(**18 passed**). `npm run build` also completed; Vite reported its existing
 module-directive and large-chunk warnings. Earlier dependency checks recorded
 clean `pip check`, `pip-audit`, and npm audit results. These checks do not prove
 translation accuracy, latency, privacy compliance, penetration resistance,
