@@ -6,6 +6,8 @@ import numpy as np
 LEFT_SHOULDER_INDEX = 21 + 21 + 11
 RIGHT_SHOULDER_INDEX = 21 + 21 + 12
 
+LANDMARK_COUNT = 75
+
 FEATURES_PER_POINT = 4
 
 
@@ -36,9 +38,7 @@ def normalize_landmarks(
             "Expected sequence shape [frames, features]."
         )
 
-    expected_features = (
-        75 * FEATURES_PER_POINT
-    )
+    expected_features = LANDMARK_COUNT * FEATURES_PER_POINT
 
     if array.shape[1] != expected_features:
         raise ValueError(
@@ -48,19 +48,19 @@ def normalize_landmarks(
 
     landmarks = array.reshape(
         array.shape[0],
-        75,
+        LANDMARK_COUNT,
         FEATURES_PER_POINT,
     )
 
     left_shoulder = landmarks[
         :,
-        32,
+        LEFT_SHOULDER_INDEX,
         :3,
     ]
 
     right_shoulder = landmarks[
         :,
-        33,
+        RIGHT_SHOULDER_INDEX,
         :3,
     ]
 

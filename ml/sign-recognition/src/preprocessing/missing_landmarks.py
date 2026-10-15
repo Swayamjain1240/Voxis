@@ -77,10 +77,6 @@ def interpolate_temporal_gaps(
 def clean_landmarks(
     sequence: np.ndarray,
 ) -> np.ndarray:
-    array = replace_invalid_values(
-        sequence
-    )
-
-    return interpolate_temporal_gaps(
-        array
-    )
+    # Interpolate while invalid positions are still marked. Filling first
+    # would turn a recoverable gap such as [0, NaN, 2] into [0, 0, 2].
+    return interpolate_temporal_gaps(sequence)
