@@ -2,7 +2,12 @@ import csv
 
 import pytest
 
-from src.datasets.manifest import ManifestValidationError, load_manifest, validate_manifest_rows
+from src.datasets.manifest import (
+    ManifestValidationError,
+    load_manifest,
+    validate_extraction_rows,
+    validate_manifest_rows,
+)
 from src.datasets.splitter import signer_wise_split
 
 
@@ -50,3 +55,36 @@ def test_csv_loader_rejects_missing_columns(tmp_path):
 
     with pytest.raises(ManifestValidationError, match="missing required columns"):
         load_manifest(path)
+
+
+def test_extraction_manifest_uses_video_path_until_sequence_exists():
+    rows = validate_extraction_rows([
+        {
+            "sample_id": "sample-1",
+            "video_path": "raw/PAIN/signer-1/sample-1.mp4",
+            "label": "pain",
+            "signer_id": "signer-1",
+        }
+    ])
+    assert rows[0]["sequence_path"] == rows[0]["video_path"]
+
+
+def test_extraction_manifest_rejects_unknown_signers_and_labels():
+    with pytest.raises(ManifestValidationError, match="known signer"):
+        validate_extraction_rows([
+            {
+                "sample_id": "sample-1",
+                "video_path": "raw/PAIN/unknown/sample-1.mp4",
+                "label": "PAIN",
+                "signer_id": "unknown",
+            }
+        ])
+    with pytest.raises(ManifestValidationError, match="Unknown canonical label"):
+        validate_extraction_rows([
+            {
+                "sample_id": "sample-1",
+                "video_path": "raw/OTHER/signer-1/sample-1.mp4",
+                "label": "OTHER",
+                "signer_id": "signer-1",
+            }
+        ])

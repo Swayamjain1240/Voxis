@@ -9,6 +9,10 @@ import numpy as np
 from mediapipe_extractor import (
     MediaPipeExtractor,
 )
+from src.datasets.manifest import (
+    load_extraction_manifest,
+    validate_extraction_rows,
+)
 
 
 VIDEO_EXTENSIONS = {
@@ -23,14 +27,7 @@ VIDEO_EXTENSIONS = {
 def load_manifest(
     manifest_path: Path,
 ) -> list[dict]:
-    with manifest_path.open(
-        "r",
-        encoding="utf-8",
-        newline="",
-    ) as handle:
-        return list(
-            csv.DictReader(handle)
-        )
+    return load_extraction_manifest(manifest_path)
 
 
 def discover_videos(
@@ -77,7 +74,7 @@ def main():
     parser.add_argument(
         "--manifest",
         type=Path,
-        help="CSV manifest containing video_path,label,signer_id.",
+        help="CSV manifest containing sample_id,video_path,label,signer_id.",
     )
 
     parser.add_argument(
@@ -86,6 +83,12 @@ def main():
         default=Path(
             "../../data/processed/sign-recognition"
         ),
+    )
+
+    parser.add_argument(
+        "--output-manifest",
+        type=Path,
+        help="Destination for the validated sequence manifest (defaults under --output).",
     )
 
     args = parser.parse_args()
@@ -109,9 +112,7 @@ def main():
                 "signer_id": row[
                     "signer_id"
                 ],
-                "sample_id": row[
-                    "sample_id"
-                ],
+                "sample_id": row["sample_id"],
             }
             for row in rows
         ]
@@ -124,12 +125,13 @@ def main():
         records = [
             {
                 "video_path": video,
-                "label": video.parent.name.upper(),
-                "signer_id": "unknown",
+                "label": video.parent.parent.name.upper(),
+                "signer_id": video.parent.name,
                 "sample_id": video.stem,
             }
             for video in videos
         ]
+        records = validate_extraction_rows(records)
 
     print(
         f"Videos queued for extraction: {len(records)}"
@@ -137,6 +139,7 @@ def main():
 
     success_count = 0
     failed_count = 0
+    extracted_rows = []
 
     with MediaPipeExtractor() as extractor:
         for index, record in enumerate(
@@ -159,6 +162,14 @@ def main():
                     output_path,
                     result.frames,
                 )
+
+                extracted_rows.append({
+                    "sample_id": record["sample_id"],
+                    "sequence_path": str(output_path),
+                    "label": record["label"].upper(),
+                    "signer_id": record["signer_id"],
+                    "video_path": str(record["video_path"]),
+                })
 
                 success_count += 1
 
@@ -185,6 +196,17 @@ def main():
     print(
         f"Failed: {failed_count}"
     )
+
+    output_manifest = args.output_manifest or (args.output / "manifest.csv")
+    output_manifest.parent.mkdir(parents=True, exist_ok=True)
+    with output_manifest.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["sample_id", "sequence_path", "label", "signer_id", "video_path"],
+        )
+        writer.writeheader()
+        writer.writerows(extracted_rows)
+    print(f"Sequence manifest: {output_manifest}")
 
 
 if __name__ == "__main__":

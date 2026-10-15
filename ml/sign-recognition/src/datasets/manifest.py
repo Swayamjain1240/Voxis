@@ -13,6 +13,12 @@ REQUIRED_COLUMNS = frozenset({
     "label",
     "signer_id",
 })
+EXTRACTION_REQUIRED_COLUMNS = frozenset({
+    "sample_id",
+    "video_path",
+    "label",
+    "signer_id",
+})
 
 
 class ManifestValidationError(ValueError):
@@ -98,3 +104,41 @@ def load_manifest(
                 f"Manifest is missing required columns: {sorted(missing)}"
             )
         return validate_manifest_rows(reader, label_map=label_map)
+
+
+def validate_extraction_rows(
+    rows: Iterable[Mapping[str, str]],
+    label_map: CanonicalLabelMap | None = None,
+) -> list[dict[str, str]]:
+    """Validate the video manifest used before sequence extraction."""
+    prepared = []
+    for row_number, row in enumerate(rows, start=2):
+        item = {str(key): str(value).strip() for key, value in row.items()}
+        missing = [
+            field for field in sorted(EXTRACTION_REQUIRED_COLUMNS)
+            if not item.get(field)
+        ]
+        if missing:
+            raise ManifestValidationError(
+                f"Extraction manifest row {row_number} requires: {', '.join(missing)}."
+            )
+        # A source path acts as the temporary sequence identity until output exists.
+        item["sequence_path"] = item["video_path"]
+        prepared.append(item)
+    return validate_manifest_rows(prepared, label_map=label_map)
+
+
+def load_extraction_manifest(
+    path: str | Path,
+    label_map: CanonicalLabelMap | None = None,
+) -> list[dict[str, str]]:
+    manifest_path = Path(path)
+    with manifest_path.open("r", encoding="utf-8-sig", newline="") as handle:
+        reader = csv.DictReader(handle)
+        columns = set(reader.fieldnames or ())
+        missing = EXTRACTION_REQUIRED_COLUMNS - columns
+        if missing:
+            raise ManifestValidationError(
+                f"Extraction manifest is missing required columns: {sorted(missing)}"
+            )
+        return validate_extraction_rows(reader, label_map=label_map)

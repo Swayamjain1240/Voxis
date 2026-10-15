@@ -6,6 +6,8 @@ import numpy as np
 import torch
 from torch.utils.data import Dataset
 
+from src.contracts.sign_input import validate_sequence
+
 
 class SignSequenceDataset(Dataset):
     """
@@ -43,18 +45,13 @@ class SignSequenceDataset(Dataset):
             path
         ).astype(np.float32)
 
-        if sequence.ndim != 2:
-            raise ValueError(
-                f"{path} must contain [frames, features]."
+        try:
+            return validate_sequence(
+                sequence,
+                sequence_length=self.sequence_length,
             )
-
-        if len(sequence) != self.sequence_length:
-            raise ValueError(
-                f"{path} has {len(sequence)} frames; "
-                f"expected {self.sequence_length}."
-            )
-
-        return sequence
+        except ValueError as error:
+            raise ValueError(f"Invalid sequence at {path}: {error}") from error
 
     def __getitem__(
         self,
