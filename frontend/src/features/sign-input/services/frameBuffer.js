@@ -2,8 +2,9 @@ import {
   isCanonicalFrame,
   FEATURES_PER_FRAME,
 } from "./landmarkExtractor";
+import { MAX_SIGN_SEQUENCE_LENGTH } from "../../../constants/app.js";
 
-export const MAX_SIGN_SEQUENCE_LENGTH = 60;
+export { MAX_SIGN_SEQUENCE_LENGTH };
 
 export class FrameBuffer {
   constructor(maxLength = MAX_SIGN_SEQUENCE_LENGTH) {

@@ -7,6 +7,7 @@ import {
   flattenCanonicalFrame,
   hasDetectedLandmarks,
 } from "../services/landmarkExtractor";
+import { isCanonicalSequence } from "../services/sequence";
 
 export function isVideoReadyForCapture(video) {
   return Boolean(
@@ -63,7 +64,11 @@ export default function useSignCapture() {
         frameBufferRef.current.push(nextFrame);
         setFrameCount(frameBufferRef.current.size());
         if (frameBufferRef.current.isFull()) {
-          setSequence(frameBufferRef.current.sequence());
+          const nextSequence = frameBufferRef.current.sequence();
+          if (!isCanonicalSequence(nextSequence)) {
+            throw new Error("The buffered sequence failed the canonical shape check.");
+          }
+          setSequence(nextSequence);
           setCaptureStatus("sequence_ready");
         } else {
           setCaptureStatus("capturing");

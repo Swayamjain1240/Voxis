@@ -8,6 +8,10 @@ import {
   hasDetectedLandmarks,
 } from "../src/features/sign-input/services/landmarkExtractor.js";
 import { FrameBuffer } from "../src/features/sign-input/services/frameBuffer.js";
+import {
+  isCanonicalSequence,
+  sequenceProgress,
+} from "../src/features/sign-input/services/sequence.js";
 
 function frame(value = 0) {
   return Array.from({ length: FEATURES_PER_FRAME }, () => value);
@@ -57,5 +61,23 @@ describe("bounded sign frame buffer", () => {
     expect(() => buffer.push([])).toThrow(/300 finite features/);
     expect(() => buffer.push(frame(Number.NaN))).toThrow(/300 finite features/);
     expect(() => new FrameBuffer(61)).toThrow(/between 1 and 60/);
+  });
+});
+
+describe("canonical sequence contract", () => {
+  it("accepts only a complete sequence of canonical frames", () => {
+    expect(isCanonicalSequence(Array.from({ length: 60 }, () => frame(1)))).toBe(true);
+    expect(isCanonicalSequence(Array.from({ length: 59 }, () => frame(1)))).toBe(false);
+    expect(isCanonicalSequence(Array.from({ length: 60 }, () => frame(Number.NaN)))).toBe(false);
+  });
+
+  it("reports bounded capture progress", () => {
+    expect(sequenceProgress(12)).toEqual({
+      count: 12,
+      max: 60,
+      ratio: 0.2,
+      ready: false,
+    });
+    expect(sequenceProgress(100, 3).ready).toBe(true);
   });
 });

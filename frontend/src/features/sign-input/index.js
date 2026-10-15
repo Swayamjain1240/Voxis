@@ -23,3 +23,7 @@ export {
 } from "./services/landmarkExtractor";
 
 export { FrameBuffer } from "./services/frameBuffer";
+export {
+  isCanonicalSequence,
+  sequenceProgress,
+} from "./services/sequence";
