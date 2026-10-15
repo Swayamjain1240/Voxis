@@ -37,6 +37,7 @@ const CameraFeed = forwardRef(function CameraFeed({
       autoPlay
       playsInline
       muted
+      aria-label="Local camera preview"
     />
   );
 });

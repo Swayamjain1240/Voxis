@@ -10,6 +10,7 @@ export default function SignInputPanel() {
   const capture = useSignCapture();
   const { camera, mediaPipe } = capture;
   const isActive = camera.isActive;
+  const isStarting = capture.captureStatus === "starting";
   const [downloadStatus, setDownloadStatus] = React.useState("");
 
   const handleDownload = () => {
@@ -52,8 +53,10 @@ export default function SignInputPanel() {
           type="button"
           className="button primary"
           onClick={isActive ? capture.stop : capture.start}
+          disabled={isStarting}
+          aria-busy={isStarting}
         >
-          {isActive ? "Stop camera" : "Start camera"}
+          {isStarting ? "Starting camera…" : isActive ? "Stop camera" : "Start camera"}
         </button>
         <button
           type="button"
