@@ -83,9 +83,30 @@ export default function HomePage() {
 
               <audio controls src={microphone.audioUrl} />
 
+              <button
+                type="button"
+                className="button secondary"
+                onClick={microphone.uploadAudio}
+                disabled={microphone.uploadStatus === "uploading"}
+              >
+                {microphone.uploadStatus === "uploading"
+                  ? "Checking upload..."
+                  : "Validate upload"}
+              </button>
+
+              {microphone.uploadStatus === "uploaded" && (
+                <p className="foundation-success">
+                  Audio passed the bounded backend upload boundary. Whisper is
+                  still disabled, so no transcript was generated.
+                </p>
+              )}
+              {microphone.uploadError && (
+                <p className="foundation-error">{microphone.uploadError}</p>
+              )}
+
               <small>
-                Phase 1 complete target: audio Blob successfully captured.
-                Whisper starts in Phase 2.
+                Capture is local until you choose to validate the upload.
+                Uploading does not start transcription.
               </small>
             </div>
           )}

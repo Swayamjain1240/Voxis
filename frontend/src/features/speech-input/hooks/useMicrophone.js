@@ -4,6 +4,7 @@ import {
   createAudioRecorder,
   getSupportedMimeType,
 } from "../services/audioRecorder";
+import { uploadSpeechAudio } from "../../../services/api";
 
 function formatDuration(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -21,6 +22,9 @@ export default function useMicrophone() {
   const [duration, setDuration] = useState(0);
   const [audioBlob, setAudioBlob] = useState(null);
   const [audioUrl, setAudioUrl] = useState("");
+  const [uploadStatus, setUploadStatus] = useState("idle");
+  const [uploadError, setUploadError] = useState("");
+  const [uploadResult, setUploadResult] = useState(null);
 
   const streamRef = useRef(null);
   const recorderRef = useRef(null);
@@ -47,12 +51,39 @@ export default function useMicrophone() {
 
   const resetAudio = useCallback(() => {
     setAudioBlob(null);
+    setUploadStatus("idle");
+    setUploadError("");
+    setUploadResult(null);
 
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
       setAudioUrl("");
     }
   }, [audioUrl]);
+
+  const uploadAudio = useCallback(async () => {
+    if (!audioBlob) {
+      setUploadStatus("error");
+      setUploadError("Record audio before uploading it.");
+      return null;
+    }
+
+    try {
+      setUploadStatus("uploading");
+      setUploadError("");
+      const result = await uploadSpeechAudio(audioBlob);
+      setUploadResult(result);
+      setUploadStatus("uploaded");
+      return result;
+    } catch (uploadRequestError) {
+      setUploadStatus("error");
+      setUploadError(
+        uploadRequestError?.message ||
+          "The audio upload could not be completed."
+      );
+      return null;
+    }
+  }, [audioBlob]);
 
   const startRecording = useCallback(async () => {
     if (!isSupported) {
@@ -162,7 +193,11 @@ export default function useMicrophone() {
     durationLabel: formatDuration(duration),
     audioBlob,
     audioUrl,
+    uploadStatus,
+    uploadError,
+    uploadResult,
     startRecording,
     stopRecording,
+    uploadAudio,
   };
 }

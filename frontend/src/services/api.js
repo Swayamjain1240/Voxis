@@ -65,16 +65,23 @@ export function getSpeechCapabilities() {
   );
 }
 
-export function uploadSpeechAudio(
-  audioBlob
-) {
+export function audioFilenameForBlob(audioBlob) {
+  const type = audioBlob?.type?.split(";", 1)[0].toLowerCase();
+  const extension = {
+    "audio/ogg": "ogg",
+    "audio/mp4": "mp4",
+    "audio/mpeg": "mp3",
+    "audio/wav": "wav",
+    "audio/x-wav": "wav",
+    "audio/webm": "webm",
+  }[type] || "webm";
+  return `speech.${extension}`;
+}
+
+export function uploadSpeechAudio(audioBlob) {
   const formData = new FormData();
 
-  formData.append(
-    "audio",
-    audioBlob,
-    "speech.webm"
-  );
+  formData.append("audio", audioBlob, audioFilenameForBlob(audioBlob));
 
   return request("/speech/upload", {
     method: "POST",
@@ -82,16 +89,10 @@ export function uploadSpeechAudio(
   });
 }
 
-export function transcribeSpeech(
-  audioBlob
-) {
+export function transcribeSpeech(audioBlob) {
   const formData = new FormData();
 
-  formData.append(
-    "audio",
-    audioBlob,
-    "speech.webm"
-  );
+  formData.append("audio", audioBlob, audioFilenameForBlob(audioBlob));
 
   return request(
     "/speech/transcribe",
