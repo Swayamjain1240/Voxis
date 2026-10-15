@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { mediaPipeConfig } from "../../../config/env.js";
 import {
@@ -43,6 +43,10 @@ export default function useMediaPipe(config = mediaPipeConfig) {
   const [lastResult, setLastResult] = useState(null);
 
   const initialize = useCallback(async () => {
+    if (processorRef.current) {
+      return true;
+    }
+
     if (!config.configured) {
       setStatus("not_configured");
       setError(NOT_CONFIGURED_MESSAGE);
@@ -100,6 +104,13 @@ export default function useMediaPipe(config = mediaPipeConfig) {
     setLastResult(null);
     setError("");
     setStatus("not_initialized");
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      processorRef.current?.close?.();
+      processorRef.current = null;
+    };
   }, []);
 
   return {

@@ -8,6 +8,15 @@ import {
   hasDetectedLandmarks,
 } from "../services/landmarkExtractor";
 
+export function isVideoReadyForCapture(video) {
+  return Boolean(
+    video &&
+      video.readyState >= 2 &&
+      video.videoWidth > 0 &&
+      video.videoHeight > 0
+  );
+}
+
 export default function useSignCapture() {
   const camera = useCamera();
   const mediaPipe = useMediaPipe();
@@ -28,6 +37,7 @@ export default function useSignCapture() {
   const [frameCount, setFrameCount] = useState(0);
   const [sequence, setSequence] = useState(null);
   const [captureStatus, setCaptureStatus] = useState("idle");
+  const [captureError, setCaptureError] = useState("");
 
   const stopLoop = useCallback(() => {
     if (animationFrameRef.current !== null) {
@@ -38,6 +48,11 @@ export default function useSignCapture() {
 
   const captureFrame = useCallback(() => {
     if (!videoRef.current || !mediaPipeIsReady) {
+      return;
+    }
+
+    if (!isVideoReadyForCapture(videoRef.current)) {
+      setCaptureStatus("camera_loading");
       return;
     }
 
@@ -56,8 +71,12 @@ export default function useSignCapture() {
       } else {
         setCaptureStatus("no_detection");
       }
+      setCaptureError("");
     } catch (captureError) {
       setCaptureStatus("error");
+      setCaptureError(
+        captureError?.message || "The camera frame could not be processed."
+      );
     }
   }, [mediaPipeIsReady, processVideo]);
 
@@ -67,12 +86,19 @@ export default function useSignCapture() {
   }, [captureFrame]);
 
   const start = useCallback(async () => {
+    setCaptureStatus("starting");
+    setCaptureError("");
     const nextStream = await startCamera();
     if (!nextStream) {
       setCaptureStatus("camera_error");
       return false;
     }
-    await initialize();
+    const initialized = await initialize();
+    if (!initialized) {
+      setCaptureStatus("media_pipe_error");
+      return false;
+    }
+    setCaptureStatus("camera_loading");
     return true;
   }, [initialize, startCamera]);
 
@@ -84,12 +110,14 @@ export default function useSignCapture() {
     setFrameCount(0);
     setSequence(null);
     setCaptureStatus("idle");
+    setCaptureError("");
   }, [reset, stopCamera, stopLoop]);
 
   const clearSequence = useCallback(() => {
     frameBufferRef.current.clear();
     setFrameCount(0);
     setSequence(null);
+    setCaptureError("");
     setCaptureStatus(cameraIsActive ? "capturing" : "idle");
   }, [cameraIsActive]);
 
@@ -115,6 +143,7 @@ export default function useSignCapture() {
     frameCount,
     sequence,
     captureStatus,
+    captureError,
     start,
     stop,
     clearSequence,
