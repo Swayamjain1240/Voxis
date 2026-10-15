@@ -16,6 +16,7 @@ from src.datasets.dataset import (
 from src.datasets.splitter import (
     signer_wise_split,
 )
+from src.contracts.label_map import load_label_map
 from src.models.transformer import (
     SignTransformer,
 )
@@ -52,22 +53,11 @@ def load_manifest(
         )
 
 
-def build_label_map(
-    rows: list[dict],
-):
-    labels = sorted(
-        {
-            row["label"].upper()
-            for row in rows
-        }
-    )
-
-    return {
-        label: index
-        for index, label in enumerate(
-            labels
-        )
-    }
+def build_label_map(rows: list[dict]):
+    """Validate a manifest against, and return, the shared label map."""
+    canonical = load_label_map()
+    canonical.validate_rows(rows)
+    return dict(canonical.gloss_to_label)
 
 
 def main():
