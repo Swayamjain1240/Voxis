@@ -4,6 +4,7 @@ export { default as SignStatus } from "./components/SignStatus";
 
 export { default as useCamera } from "./hooks/useCamera";
 export { default as useMediaPipe } from "./hooks/useMediaPipe";
+export { default as useSignCapture } from "./hooks/useSignCapture";
 
 export {
   LEFT_HAND_LANDMARK_COUNT,

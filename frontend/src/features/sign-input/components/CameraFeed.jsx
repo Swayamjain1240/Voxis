@@ -1,11 +1,12 @@
-﻿import React, { useEffect, useRef } from "react";
+﻿import React, { forwardRef, useEffect, useRef } from "react";
 
-export default function CameraFeed({
+const CameraFeed = forwardRef(function CameraFeed({
   stream,
   mirrored = true,
   className = "",
-}) {
-  const videoRef = useRef(null);
+}, forwardedRef) {
+  const internalRef = useRef(null);
+  const videoRef = forwardedRef || internalRef;
 
   useEffect(() => {
     const video = videoRef.current;
@@ -38,4 +39,6 @@ export default function CameraFeed({
       muted
     />
   );
-}
+});
+
+export default CameraFeed;
