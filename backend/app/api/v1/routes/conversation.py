@@ -8,6 +8,9 @@ from app.schemas.conversation import (
 )
 from app.schemas.response import ApiResponse, success
 from app.services.language.gloss_to_text import gloss_to_text
+from app.services.language.gloss_conversion import (
+    convert_text_to_gloss as convert_text_to_gloss_service,
+)
 from app.services.language.text_to_gloss import text_to_gloss
 
 
@@ -42,12 +45,11 @@ async def convert_text_to_gloss(
             payload = TextToGlossRequest(text=text, context=context)
         except ValidationError as error:
             raise RequestValidationError(error.errors()) from error
+    conversion = convert_text_to_gloss_service(payload.text, context=payload.context)
     return success(request, {
         "text": payload.text,
-        "glosses": text_to_gloss(payload.text, context=payload.context),
+        **conversion.as_dict(),
         "context": payload.context,
-        "source": "deterministic",
-        "vocabulary_version": "1.0.0",
     })
 
 

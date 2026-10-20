@@ -27,6 +27,7 @@ KEYWORD_ALIASES = {
     "yeah": "YES",
     "yep": "YES",
     "ache": "PAIN",
+    "hurt": "PAIN",
 }
 KEYWORD_MAP = {**VOCABULARY.keywords, **KEYWORD_ALIASES}
 
