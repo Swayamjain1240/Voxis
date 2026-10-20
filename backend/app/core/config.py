@@ -219,6 +219,14 @@ class Settings:
         )
     )
 
+    sign_confidence_threshold: float = field(
+        default_factory=lambda: float(os.getenv("SIGN_CONFIDENCE_THRESHOLD", "0.60"))
+    )
+
+    sign_margin_threshold: float = field(
+        default_factory=lambda: float(os.getenv("SIGN_MARGIN_THRESHOLD", "0.05"))
+    )
+
     def __post_init__(self):
         normalized_environment = self.environment.strip().lower()
         if normalized_environment != self.environment:
@@ -247,6 +255,10 @@ class Settings:
             raise ValueError("ALLOWED_HOSTS must contain explicit hostnames, not wildcards or URLs.")
         if not self.cors_origins:
             raise ValueError("CORS_ORIGINS must contain explicit origins.")
+        if not 0.0 <= self.sign_confidence_threshold <= 1.0:
+            raise ValueError("SIGN_CONFIDENCE_THRESHOLD must be between 0 and 1.")
+        if not 0.0 <= self.sign_margin_threshold <= 1.0:
+            raise ValueError("SIGN_MARGIN_THRESHOLD must be between 0 and 1.")
         for origin in self.cors_origins:
             try:
                 parsed = urlsplit(origin)
