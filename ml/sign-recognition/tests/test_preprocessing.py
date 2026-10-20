@@ -168,3 +168,31 @@ def test_manifest_preparation_is_reproducible_and_writes_training_manifest(tmp_p
     assert rows[0]["preprocessing_version"] == "1.0.0"
     assert int(rows[0]["augmentation_seed"]) == stable_sample_seed(7, "sample-1")
     assert output_manifest.exists()
+    assert (output / "preprocessing_config.json").exists()
+    assert (output / "rejected.csv").exists()
+
+
+def test_manifest_preparation_reports_invalid_sequence_without_fabricating_output(tmp_path):
+    source = tmp_path / "raw" / "PAIN" / "signer-1" / "bad.npy"
+    source.parent.mkdir(parents=True)
+    np.save(source, np.ones((30, 299), dtype=np.float32))
+    manifest = tmp_path / "input.csv"
+    manifest.write_text(
+        "sample_id,sequence_path,label,signer_id\n"
+        f"bad,{source},PAIN,signer-1\n",
+        encoding="utf-8",
+    )
+
+    with pytest.raises(RuntimeError, match="No valid sequences"):
+        prepare_manifest(
+            manifest,
+            None,
+            tmp_path / "processed",
+            tmp_path / "processed" / "manifest.csv",
+            sequence_length=60,
+            augment=False,
+            seed=42,
+        )
+    rejection = (tmp_path / "processed" / "rejected.csv").read_text(encoding="utf-8")
+    assert "bad" in rejection
+    assert "299" in rejection

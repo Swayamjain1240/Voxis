@@ -8,10 +8,11 @@ is retained only where it helps explain repository history or compatibility.
 
 ## Current status at a glance
 
-This repository is at the **Phase 1 foundation** stage. It is not yet a
-complete two-way sign-language translator. The current source supports the
-local microphone/avatar foundation and an asset-gated camera-to-sequence input
-foundation; the end-to-end AI pipelines are still planned work.
+This repository is at the **Phase 2 data and speech preparation** stage. It is
+not yet a complete two-way sign-language translator. The current source
+supports the Phase 1 input foundation plus reproducible ML preparation and an
+optional local Whisper transcription flow; the trained AI and end-to-end
+pipelines are still later work.
 
 The status labels used in this README and the phase/architecture documents are:
 
@@ -31,14 +32,15 @@ The status labels used in this README and the phase/architecture documents are:
 | Avatar foundation | **Implemented (source)** | A procedural Three.js avatar renders idle/wave/sign gestures. An optional GLB URL boundary exists, but a production sign-animation library is not present. |
 | Camera/sign input | **Implemented (source, asset-gated)** | The Conversation route requests camera permission, shows local video and landmarks, runs the configured MediaPipe Holistic Landmarker adapter, buffers a validated 60-frame canonical sequence, and offers local JSON export. Model/WASM asset paths are optional and the sign model is not enabled. |
 | Backend foundation | **Partial / scaffold** | FastAPI health/readiness routes, exact host/origin policy, bounded/content-validated audio upload, typed REST models, request limits, security headers, and an explicitly disabled WebSocket boundary exist. They do not constitute the completed translation pipelines. |
-| Speech recognition | **Planned** | Whisper/faster-whisper is represented by a disabled service boundary. Audio capture/upload is not transcription. |
+| Speech recognition | **Implemented (source, optional runtime)** | Bounded audio quality checks, structured transcription contracts, a lazy local faster-whisper adapter, and frontend transcript/retry states exist. A local runtime/model is not included. |
 | Sign recognition | **Planned** | ML extraction/preprocessing/model helpers and a disabled backend inference boundary exist, but no trained or loaded model is part of the current runtime. |
 | Language and speech output | **Partial / scaffold** | A deterministic, vocabulary-constrained keyword/template fallback exists. LLM-backed conversion and TTS are not integrated. |
 | Conversation experience | **Partial / scaffold** | Context selection, turn state, transcript/gloss display, clear/reset, camera foundation, and honest microphone/upload states are connected; translation directions are not end to end. |
 | Remote communication | **Deferred / not applicable** | Mode 2 rooms, QR/room joining, and remote media/landmark exchange are deliberately disabled. |
 
-**Overall Phase 1 status: source foundation implemented / runtime verification
-pending.** The speech/avatar slice is usable as a foundation demo and the
+**Overall status: Phase 1 source foundation plus Phase 2 preparation implemented
+/ runtime verification pending.** The speech/avatar slice is usable as a
+foundation demo and the
 `camera → live landmarks → buffered sequence` flow is wired in the Conversation
 route. A live browser run still requires local public MediaPipe assets and
 manual/E2E verification. See [`docs/phases/phase-1.md`](docs/phases/phase-1.md)
@@ -278,7 +280,7 @@ Dataset provenance and licensing remain an open part of the data work.
 | --- | --- | --- |
 | Phase 0 — Dataset and vocabulary | **Conditional foundation** | Audit notes and the 12-label shared vocabulary exist; final license verification and the later 30–50 target remain open. |
 | Phase 1 — Input foundation | **Source foundation implemented / runtime verification pending** | Microphone capture, procedural avatar rendering, and the asset-gated browser camera-to-landmark sequence path are source-backed; trained inference and complete translation remain later work. |
-| Phase 2 — Data and speech preparation | **Planned** | Reproducible preprocessing, signer-aware manifests, and real Whisper transcription. |
+| Phase 2 — Data and speech preparation | **Source implementation complete / runtime verification pending** | Reproducible preprocessing, rejection reports, signer-aware split manifests, bounded audio quality checks, and an optional local Whisper flow. A real dataset/model run remains open. |
 | Phase 3 — AI core | **Planned** | Trained/evaluated fixed-vocabulary model and restricted language conversion. |
 | Phase 4 — Live recognition and avatar clips | **Planned** | Runtime model loading, confidence/rejection behavior, and real sign animation assets. |
 | Phase 5 — Complete pipelines | **Planned** | Independently working sign-to-speech and speech-to-sign flows. |

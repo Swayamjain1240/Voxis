@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import csv
 import hashlib
+import json
 from pathlib import Path
 
 import numpy as np
@@ -133,6 +134,7 @@ def prepare_manifest(
         augmentation_seed=seed,
     )
     prepared_rows = []
+    rejected_rows = []
 
     for row in rows:
         sample_id = _safe_component(row["sample_id"], "sample_id")
@@ -144,14 +146,24 @@ def prepare_manifest(
 
         destination = output_root / label / signer_id / f"{sample_id}.npy"
         sample_seed = stable_sample_seed(seed, sample_id)
-        process_file(
-            source_path,
-            destination,
-            sequence_length,
-            augment,
-            seed=sample_seed,
-            config=config,
-        )
+        try:
+            process_file(
+                source_path,
+                destination,
+                sequence_length,
+                augment,
+                seed=sample_seed,
+                config=config,
+            )
+        except (OSError, ValueError) as error:
+            rejected_rows.append({
+                "sample_id": sample_id,
+                "sequence_path": str(source_path),
+                "label": label,
+                "signer_id": signer_id,
+                "reason": str(error),
+            })
+            continue
 
         prepared_row = dict(row)
         prepared_row.update({
@@ -177,6 +189,23 @@ def prepare_manifest(
         writer = csv.DictWriter(handle, fieldnames=fieldnames + extras)
         writer.writeheader()
         writer.writerows(prepared_rows)
+    rejection_path = output_manifest.with_name("rejected.csv")
+    with rejection_path.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(
+            handle,
+            fieldnames=["sample_id", "sequence_path", "label", "signer_id", "reason"],
+        )
+        writer.writeheader()
+        writer.writerows(rejected_rows)
+    (output_manifest.parent / "preprocessing_config.json").write_text(
+        json.dumps({
+            **config.as_dict(),
+            "augmentation_enabled": augment,
+        }, indent=2),
+        encoding="utf-8",
+    )
+    if not prepared_rows:
+        raise RuntimeError("No valid sequences remained after preprocessing.")
     return prepared_rows
 
 

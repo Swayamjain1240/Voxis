@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import csv
+import json
 from pathlib import Path
 from typing import Iterable, Mapping
 
@@ -104,6 +105,51 @@ def load_manifest(
                 f"Manifest is missing required columns: {sorted(missing)}"
             )
         return validate_manifest_rows(reader, label_map=label_map)
+
+
+def write_manifest(
+    path: str | Path,
+    rows: Iterable[Mapping[str, str]],
+    label_map: CanonicalLabelMap | None = None,
+) -> Path:
+    normalized = validate_manifest_rows(rows, label_map=label_map)
+    destination = Path(path)
+    destination.parent.mkdir(parents=True, exist_ok=True)
+    extra_columns = sorted(
+        {key for row in normalized for key in row}
+        - REQUIRED_COLUMNS
+    )
+    fieldnames = ["sample_id", "sequence_path", "label", "signer_id"] + extra_columns
+    with destination.open("w", encoding="utf-8", newline="") as handle:
+        writer = csv.DictWriter(handle, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(normalized)
+    return destination
+
+
+def write_split_manifests(
+    split: Mapping[str, list[Mapping[str, str]]],
+    output_dir: str | Path,
+) -> dict[str, Path]:
+    destination = Path(output_dir)
+    destination.mkdir(parents=True, exist_ok=True)
+    paths = {
+        name: write_manifest(destination / f"{name}.csv", split[name])
+        for name in ("train", "validation", "test")
+    }
+    metadata = {
+        "schema_version": "1.0.0",
+        "strategy": "signer_wise",
+        "train_signers": list(split.get("train_signers", [])),
+        "validation_signers": list(split.get("validation_signers", [])),
+        "test_signers": list(split.get("test_signers", [])),
+        "manifests": {name: str(path) for name, path in paths.items()},
+    }
+    (destination / "split_metadata.json").write_text(
+        json.dumps(metadata, indent=2),
+        encoding="utf-8",
+    )
+    return paths
 
 
 def validate_extraction_rows(

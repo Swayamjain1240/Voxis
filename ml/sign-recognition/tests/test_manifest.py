@@ -7,6 +7,7 @@ from src.datasets.manifest import (
     load_manifest,
     validate_extraction_rows,
     validate_manifest_rows,
+    write_split_manifests,
 )
 from src.datasets.splitter import signer_wise_split
 
@@ -79,6 +80,17 @@ def test_extraction_manifest_rejects_unknown_signers_and_labels():
                 "signer_id": "unknown",
             }
         ])
+
+
+def test_split_manifests_write_signer_metadata_and_csvs(tmp_path):
+    rows = [row(f"{signer}-sample", signer) for signer in ("s1", "s2", "s3")]
+    split = signer_wise_split(rows)
+    paths = write_split_manifests(split, tmp_path / "splits")
+
+    assert set(paths) == {"train", "validation", "test"}
+    assert all(path.exists() for path in paths.values())
+    metadata = (tmp_path / "splits" / "split_metadata.json").read_text(encoding="utf-8")
+    assert '"strategy": "signer_wise"' in metadata
     with pytest.raises(ManifestValidationError, match="Unknown canonical label"):
         validate_extraction_rows([
             {
