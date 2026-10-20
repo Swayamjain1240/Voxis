@@ -92,8 +92,38 @@ ML-contract and dataset-integrity scope. A real dataset, trained checkpoint,
 held-out-signer result, and avatar clips remain explicitly outside this
 contract-correction scope and are not claimed.
 
-## Duck review — pending
+## Final Duck review — Fixing Part 3
 
-The Duck review is the next required step after this completion checkpoint.
+**Verdict: DUCK PASS WITH GAPS.**
 
-**Not yet recorded.**
+Review target: `c92d5d2` (`complete part 3 verification`).
+
+The Part 3 contract-correction scope is complete. The review found no blocking
+regression in the canonical preprocessing, vocabulary, manifest, signer-split,
+metadata, evaluation, export, rejection, or optional runtime boundaries. The
+shared vocabulary freeze is verified, and the current implementation does not
+present scaffolding as trained-model evidence.
+
+Evidence for this review:
+
+- backend regression suite: **108 passed**;
+- frontend Vitest suite: **26 passed**;
+- frontend Vite build: completed with the existing module-directive and
+  large-chunk warnings;
+- ML contract suite: **52 passed, 2 skipped**;
+- ML source and scripts: `python -m compileall -q src tests scripts` passed;
+- vocabulary freeze verification passed;
+- `git diff --check` passed and the working tree is clean;
+- avatar coverage audit completed and reported **0 of 12** available clips.
+
+The gaps are explicit and non-blocking for this contract-correction scope:
+
+- the checkout has no approved `data/` directory or training manifest;
+- PyTorch is unavailable, so architecture tests are skipped and no training run
+  or accuracy result is claimed;
+- no trained checkpoint, held-out-signer result, or real confusion matrix exists;
+- no approved avatar clip is available for any of the 12 frozen glosses.
+
+**Duck review complete. Part 3 is complete for its defined ML-contract and
+dataset-integrity scope. The real-data training gate remains a separate
+evidence requirement for the broader Phase 3 AI-core definition.**
