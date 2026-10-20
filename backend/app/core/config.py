@@ -191,6 +191,27 @@ class Settings:
         )
     )
 
+    whisper_model_path: str = field(
+        default_factory=lambda: read_environment(
+            "WHISPER_MODEL_PATH",
+            "",
+        )
+    )
+
+    whisper_device: str = field(
+        default_factory=lambda: read_environment(
+            "WHISPER_DEVICE",
+            "cpu",
+        )
+    )
+
+    whisper_compute_type: str = field(
+        default_factory=lambda: read_environment(
+            "WHISPER_COMPUTE_TYPE",
+            "int8",
+        )
+    )
+
     sign_model_path: str = field(
         default_factory=lambda: read_environment(
             "SIGN_MODEL_PATH",

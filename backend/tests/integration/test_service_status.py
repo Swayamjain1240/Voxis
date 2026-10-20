@@ -18,6 +18,16 @@ def wav_fixture():
     return output.getvalue()
 
 
+def valid_wav_fixture(frame_count: int = 8000):
+    output = BytesIO()
+    with wave.open(output, "wb") as audio:
+        audio.setnchannels(1)
+        audio.setsampwidth(2)
+        audio.setframerate(8000)
+        audio.writeframes(b"\xff\x1f" * frame_count)
+    return output.getvalue()
+
+
 def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
     monkeypatch.setattr(speech, "whisper_service", WhisperService(enabled=True))
     with TestClient(app, base_url="http://localhost") as client:
@@ -26,7 +36,7 @@ def test_enabled_whisper_is_unavailable_over_http(monkeypatch):
         assert capabilities["transcription_status"] == "unavailable"
         response = client.post(
             "/api/v1/speech/transcribe",
-            files={"audio": ("sample.wav", wav_fixture(), "audio/wav")},
+            files={"audio": ("sample.wav", valid_wav_fixture(), "audio/wav")},
         )
     assert response.status_code == 503
     assert response.json()["error"]["code"] == "WHISPER_UNAVAILABLE"

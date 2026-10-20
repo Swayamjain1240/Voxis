@@ -3,6 +3,7 @@ import {
   audioFilenameForBlob,
   getHealth,
   textToGloss,
+  transcribeSpeech,
   uploadSpeechAudio,
 } from "../src/services/api.js";
 
@@ -54,5 +55,21 @@ describe("REST contract adapter", () => {
       headers: { "content-type": "application/json" },
     })));
     await expect(getHealth()).rejects.toThrow("unsupported response contract");
+  });
+
+  it("posts the recorded blob to the transcription endpoint", async () => {
+    const fetchMock = vi.fn().mockResolvedValue(new Response(JSON.stringify({
+      success: true,
+      data: { transcript: "Where does it hurt?", language: "en" },
+      meta: { api_version: "v1", schema_version: "1.0.0", request_id: "req" },
+    }), { headers: { "content-type": "application/json" } }));
+    vi.stubGlobal("fetch", fetchMock);
+    const result = await transcribeSpeech(
+      new Blob(["audio"], { type: "audio/ogg;codecs=opus" })
+    );
+
+    expect(result.transcript).toBe("Where does it hurt?");
+    expect(fetchMock.mock.calls[0][0]).toContain("/speech/transcribe");
+    expect(fetchMock.mock.calls[0][1].body.get("audio").name).toBe("speech.ogg");
   });
 });

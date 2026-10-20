@@ -24,15 +24,15 @@ export default function HomePage() {
           </h1>
 
           <p>
-            Phase 1 foundation for the Rishi pipeline:
-            microphone capture + 3D avatar runtime.
+            Phase 2 speech preparation: bounded microphone capture with an
+            optional local Whisper transcription runtime.
           </p>
         </div>
 
         <div className="phase-card">
           <span>ACTIVE PHASE</span>
-          <strong>01</strong>
-          <small>Input Foundation</small>
+          <strong>02</strong>
+          <small>Data &amp; Speech Preparation</small>
         </div>
       </section>
 
@@ -94,6 +94,19 @@ export default function HomePage() {
                   : "Validate upload"}
               </button>
 
+              <button
+                type="button"
+                className="button secondary"
+                onClick={microphone.transcribeAudio}
+                disabled={microphone.transcriptionStatus === "transcribing"}
+              >
+                {microphone.transcriptionStatus === "transcribing"
+                  ? "Transcribing..."
+                  : microphone.transcriptionStatus === "error"
+                    ? "Retry transcription"
+                    : "Transcribe speech"}
+              </button>
+
               {microphone.uploadStatus === "uploaded" && (
                 <p className="foundation-success">
                   Audio passed the bounded backend upload boundary. Whisper is
@@ -104,9 +117,27 @@ export default function HomePage() {
                 <p className="foundation-error">{microphone.uploadError}</p>
               )}
 
+              {microphone.transcriptionResult?.transcript && (
+                <div className="transcription-result" aria-live="polite">
+                  <span className="panel-kicker">TRANSCRIPT / ENGLISH</span>
+                  <p>{microphone.transcriptionResult.transcript}</p>
+                  {microphone.transcriptionResult.confidence != null && (
+                    <small>
+                      Confidence: {Math.round(microphone.transcriptionResult.confidence * 100)}%
+                    </small>
+                  )}
+                </div>
+              )}
+              {microphone.transcriptionError && (
+                <p className="foundation-error" role="alert">
+                  {microphone.transcriptionError}
+                </p>
+              )}
+
               <small>
                 Capture is local until you choose to validate the upload.
-                Uploading does not start transcription.
+                 Uploading does not start transcription. Transcription uses the
+                 optional local Whisper runtime when enabled.
               </small>
             </div>
           )}

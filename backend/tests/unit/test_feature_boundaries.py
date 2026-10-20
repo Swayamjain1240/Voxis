@@ -43,3 +43,27 @@ def test_enabled_placeholder_services_do_not_fabricate_success():
         asyncio.run(sign.predict({"frames": []}))
     with pytest.raises(FeatureUnavailableError):
         asyncio.run(tts.synthesize("hello"))
+
+
+def test_injected_whisper_model_returns_structured_english_transcript(tmp_path):
+    class Segment:
+        text = "  Where does it hurt?  "
+        avg_logprob = -0.1
+
+    class Info:
+        language_probability = 0.98
+
+    class FakeModel:
+        def transcribe(self, path, **options):
+            assert path
+            assert options["language"] == "en"
+            return iter([Segment()]), Info()
+
+    whisper = WhisperService(enabled=True, model=FakeModel())
+    result = asyncio.run(
+        whisper.transcribe(b"audio", "sample.wav", "audio/wav")
+    )
+
+    assert result.transcript == "Where does it hurt?"
+    assert result.language == "en"
+    assert result.confidence == 0.98

@@ -1,0 +1,2 @@
+# Optional local speech runtime. Install this only when WHISPER_ENABLED=true.
+faster-whisper>=1.0,<2

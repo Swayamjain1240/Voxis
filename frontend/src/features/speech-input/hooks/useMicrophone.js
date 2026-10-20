@@ -4,7 +4,7 @@ import {
   createAudioRecorder,
   getSupportedMimeType,
 } from "../services/audioRecorder";
-import { uploadSpeechAudio } from "../../../services/api";
+import { transcribeSpeech, uploadSpeechAudio } from "../../../services/api";
 
 function formatDuration(seconds) {
   const minutes = Math.floor(seconds / 60);
@@ -25,6 +25,9 @@ export default function useMicrophone() {
   const [uploadStatus, setUploadStatus] = useState("idle");
   const [uploadError, setUploadError] = useState("");
   const [uploadResult, setUploadResult] = useState(null);
+  const [transcriptionStatus, setTranscriptionStatus] = useState("idle");
+  const [transcriptionError, setTranscriptionError] = useState("");
+  const [transcriptionResult, setTranscriptionResult] = useState(null);
 
   const streamRef = useRef(null);
   const recorderRef = useRef(null);
@@ -54,6 +57,9 @@ export default function useMicrophone() {
     setUploadStatus("idle");
     setUploadError("");
     setUploadResult(null);
+    setTranscriptionStatus("idle");
+    setTranscriptionError("");
+    setTranscriptionResult(null);
 
     if (audioUrl) {
       URL.revokeObjectURL(audioUrl);
@@ -80,6 +86,30 @@ export default function useMicrophone() {
       setUploadError(
         uploadRequestError?.message ||
           "The audio upload could not be completed."
+      );
+      return null;
+    }
+  }, [audioBlob]);
+
+  const transcribeAudio = useCallback(async () => {
+    if (!audioBlob) {
+      setTranscriptionStatus("error");
+      setTranscriptionError("Record audio before requesting transcription.");
+      return null;
+    }
+
+    try {
+      setTranscriptionStatus("transcribing");
+      setTranscriptionError("");
+      const result = await transcribeSpeech(audioBlob);
+      setTranscriptionResult(result);
+      setTranscriptionStatus("transcribed");
+      return result;
+    } catch (transcriptionRequestError) {
+      setTranscriptionStatus("error");
+      setTranscriptionError(
+        transcriptionRequestError?.message ||
+          "The audio could not be transcribed."
       );
       return null;
     }
@@ -196,8 +226,12 @@ export default function useMicrophone() {
     uploadStatus,
     uploadError,
     uploadResult,
+    transcriptionStatus,
+    transcriptionError,
+    transcriptionResult,
     startRecording,
     stopRecording,
     uploadAudio,
+    transcribeAudio,
   };
 }
