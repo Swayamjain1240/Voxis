@@ -10,6 +10,7 @@ from src.models.transformer import (
     SignTransformer,
 )
 from src.contracts.model_metadata import validate_checkpoint_metadata
+from src.contracts.label_map import load_label_map
 
 
 def main():
@@ -100,12 +101,7 @@ def main():
     )
 
     label_map_path.write_text(
-        json.dumps(
-            checkpoint[
-                "label_map"
-            ],
-            indent=2,
-        ),
+        json.dumps(load_label_map().as_dict(), indent=2),
         encoding="utf-8",
     )
 

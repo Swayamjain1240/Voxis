@@ -14,6 +14,16 @@ def test_load_label_map_preserves_shared_order():
     assert label_map.unknown_label == -1
 
 
+def test_label_map_sidecar_round_trip_shape():
+    label_map = load_label_map()
+    payload = label_map.as_dict()
+    assert payload["version"] == label_map.version
+    assert payload["gloss_to_label"] == label_map.gloss_to_label
+    assert payload["labels"] == {
+        str(index): gloss for index, gloss in label_map.label_to_gloss.items()
+    }
+
+
 def test_manifest_labels_must_use_shared_vocabulary():
     label_map = load_label_map()
 

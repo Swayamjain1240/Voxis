@@ -27,6 +27,18 @@ class CanonicalLabelMap:
             for index in sorted(self.label_to_gloss)
         )
 
+    def as_dict(self) -> dict[str, object]:
+        """Return the shared contract used by exported model sidecars."""
+        return {
+            "version": self.version,
+            "labels": {
+                str(index): gloss
+                for index, gloss in self.label_to_gloss.items()
+            },
+            "gloss_to_label": dict(self.gloss_to_label),
+            "unknown_label": self.unknown_label,
+        }
+
     def validate_rows(self, rows: list[Mapping[str, str]]) -> None:
         for row in rows:
             gloss = str(row.get("label", "")).strip().upper()
