@@ -27,7 +27,7 @@ the server does not trust an arbitrary incoming identifier.
 | `GET /api/v1/sign/status` | Model availability |
 | `POST /api/v1/sign/predict` | 60 x 300 finite raw features, optional `top_k` 1–10/context; 501 / 503 after validation |
 | `POST /api/v1/conversation/message` | Validated user message, optional context; returns normalized message, no shared storage |
-| `POST /api/v1/conversation/text-to-gloss` | JSON `{text,context?,language:"en"}`; deterministic keyword fallback |
+| `POST /api/v1/conversation/text-to-gloss` | JSON `{text,context?,language:"en"}`; returns vocabulary-constrained `glosses`, `unsupported`, `source`, and `vocabulary_version` |
 | `POST /api/v1/conversation/gloss-to-text` | JSON `{glosses,context?,language:"en"}`; deterministic template fallback |
 | `GET /api/v1/rooms/status` | Disabled |
 | `POST /api/v1/rooms`, `/rooms/join` | 501; Mode 2 is not enabled |
@@ -45,8 +45,10 @@ uses a 15-second timeout, omits credentials and does not automatically retry
 requests. Transcript rendering uses React text escaping and canonical IDs.
 
 The current language conversion is a restricted keyword/template fallback,
-not an ISL grammar engine or an LLM. The original text/gloss input is preserved.
-No TTS route or real provider is introduced by this contract migration.
+not an ISL grammar engine or an LLM. Unsupported generated tokens are returned
+separately and context allowlists are enforced. The original text/gloss input is
+preserved. No TTS route or real provider is introduced by this contract
+migration.
 
 ## HTTP security boundary
 

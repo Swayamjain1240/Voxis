@@ -8,11 +8,12 @@ is retained only where it helps explain repository history or compatibility.
 
 ## Current status at a glance
 
-This repository is at the **Phase 2 data and speech preparation** stage. It is
-not yet a complete two-way sign-language translator. The current source
-supports the Phase 1 input foundation plus reproducible ML preparation and an
-optional local Whisper transcription flow; the trained AI and end-to-end
-pipelines are still later work.
+This repository is at the **Phase 3 AI-core scaffolding** stage. It is not yet a
+complete two-way sign-language translator. The current source supports the
+Phase 1 input foundation, Phase 2 preparation, versioned model/evaluation
+contracts, an optional local sign-model runtime boundary, and a restricted
+vocabulary text-to-gloss fallback. No trained model artifact or accuracy claim
+is included.
 
 The status labels used in this README and the phase/architecture documents are:
 
@@ -33,8 +34,8 @@ The status labels used in this README and the phase/architecture documents are:
 | Camera/sign input | **Implemented (source, asset-gated)** | The Conversation route requests camera permission, shows local video and landmarks, runs the configured MediaPipe Holistic Landmarker adapter, buffers a validated 60-frame canonical sequence, and offers local JSON export. Model/WASM asset paths are optional and the sign model is not enabled. |
 | Backend foundation | **Partial / scaffold** | FastAPI health/readiness routes, exact host/origin policy, bounded/content-validated audio upload, typed REST models, request limits, security headers, and an explicitly disabled WebSocket boundary exist. They do not constitute the completed translation pipelines. |
 | Speech recognition | **Implemented (source, optional runtime)** | Bounded audio quality checks, structured transcription contracts, a lazy local faster-whisper adapter, and frontend transcript/retry states exist. A local runtime/model is not included. |
-| Sign recognition | **Planned** | ML extraction/preprocessing/model helpers and a disabled backend inference boundary exist, but no trained or loaded model is part of the current runtime. |
-| Language and speech output | **Partial / scaffold** | A deterministic, vocabulary-constrained keyword/template fallback exists. LLM-backed conversion and TTS are not integrated. |
+| Sign recognition | **Partial / scaffold** | Versioned model configuration, metrics, calibration/rejection contracts, signer-aware evaluation reporting, checkpoint/ONNX sidecar validation, and an optional backend runtime boundary exist; no trained or loaded model is part of the current runtime. |
+| Language and speech output | **Partial / scaffold** | A vocabulary/context-constrained gloss converter returns accepted glosses, unsupported tokens, source, and vocabulary version. No external LLM or TTS provider is integrated. |
 | Conversation experience | **Partial / scaffold** | Context selection, turn state, transcript/gloss display, clear/reset, camera foundation, and honest microphone/upload states are connected; translation directions are not end to end. |
 | Remote communication | **Deferred / not applicable** | Mode 2 rooms, QR/room joining, and remote media/landmark exchange are deliberately disabled. |
 
@@ -97,14 +98,15 @@ The planned pipeline is:
 
 ```text
 Camera → browser MediaPipe landmarks → 60-frame sequence
-       → fixed-vocabulary sign model → glosses → restricted language output
+       → optional fixed-vocabulary sign model → glosses → restricted language output
        → captions and optional speech
 ```
 
 Camera lifecycle helpers, landmark contracts, a configured Tasks Vision adapter,
 a bounded capture loop, user-facing states, and local sequence export are
-present in the Conversation route. A trained sign model, confidence policy,
-and complete translation route are still planned.
+present in the Conversation route. Confidence/rejection policies and runtime
+contracts are implemented, but a trained sign model, model artifact, and
+complete translation route are still pending.
 
 ### Speech → transcript → signing avatar direction
 
@@ -281,7 +283,7 @@ Dataset provenance and licensing remain an open part of the data work.
 | Phase 0 — Dataset and vocabulary | **Conditional foundation** | Audit notes and the 12-label shared vocabulary exist; final license verification and the later 30–50 target remain open. |
 | Phase 1 — Input foundation | **Source foundation implemented / runtime verification pending** | Microphone capture, procedural avatar rendering, and the asset-gated browser camera-to-landmark sequence path are source-backed; trained inference and complete translation remain later work. |
 | Phase 2 — Data and speech preparation | **Source implementation complete / runtime verification pending** | Reproducible preprocessing, rejection reports, signer-aware split manifests, bounded audio quality checks, and an optional local Whisper flow. A real dataset/model run remains open. |
-| Phase 3 — AI core | **Planned** | Trained/evaluated fixed-vocabulary model and restricted language conversion. |
+| Phase 3 — AI core | **Partial / scaffold** | Model, evaluation, calibration, rejection, metadata, optional runtime, and restricted gloss-conversion contracts exist; training on real data and measured held-out-signer results remain open. |
 | Phase 4 — Live recognition and avatar clips | **Planned** | Runtime model loading, confidence/rejection behavior, and real sign animation assets. |
 | Phase 5 — Complete pipelines | **Planned** | Independently working sign-to-speech and speech-to-sign flows. |
 | Phase 6 — Integration and reliability | **Planned** | One-device Mode 1 conversation, error handling, release evidence, and security hardening. |
@@ -305,11 +307,12 @@ review are future or not applicable to this foundation. The full register is in
 
 ## Verification note
 
-The current checkpoint has been verified with `backend/.venv/Scripts/python.exe
--B -m pytest -p no:cacheprovider` (**98 passed**) and `npm test -- --run`
-(**25 passed**). `npm run build` also completed; Vite reported its existing
-module-directive and large-chunk warnings. Earlier dependency checks recorded
-clean `pip check`, `pip-audit`, and npm audit results. These checks do not prove
+The current Phase 3 checkpoint has been verified with
+`backend/.venv/Scripts/python.exe -B -m pytest -p no:cacheprovider`
+(**108 passed**) and the focused ML contract suite (**44 passed**). ML source
+compilation also passes with `python -m compileall -q src tests scripts`.
+PyTorch and ONNX Runtime are optional environments here, so no real training,
+export, or live model execution was claimed. These checks do not prove
 translation accuracy, latency, privacy compliance, penetration resistance,
 browser E2E behavior, or production readiness.
 
