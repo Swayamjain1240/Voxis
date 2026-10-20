@@ -33,20 +33,21 @@ content/source groups crossing signer boundaries are rejected.
 
 ## Acceptance criteria
 
-- Shoulder normalization uses the canonical pose indices 53 and 54.
-- Invalid landmark gaps are interpolated before unrecoverable values are
+- [x] Shoulder normalization uses the canonical pose indices 53 and 54.
+- [x] Invalid landmark gaps are interpolated before unrecoverable values are
   zero-filled.
-- Training, evaluation, export, and inference use the shared ordered label map
-  and `unknown_label = -1`.
-- Dataset sequences are exactly `60 × 300` and contain only finite values.
-- Signer-wise splits reject duplicate content/source groups crossing boundaries.
-- Inference rejects malformed input and unsupported, unknown, or low-confidence
-  predictions instead of presenting them as reliable glosses.
-- Checkpoints carry and validate model, vocabulary, preprocessing, shape, and
-  unknown-label metadata.
-- Dataset extraction produces a training-ready manifest.
-- No trained-model or accuracy claim is made without the ML runtime, data, and
-  held-out-signer evaluation evidence.
+- [x] Training, evaluation, export, and inference use the shared ordered label
+  map and `unknown_label = -1`.
+- [x] Dataset sequences are exactly `60 × 300` and contain only finite values.
+- [x] Signer-wise splits reject duplicate content/source groups crossing
+  boundaries.
+- [x] Inference rejects malformed input and unsupported, unknown, or
+  low-confidence predictions instead of presenting them as reliable glosses.
+- [x] Checkpoints carry and validate model, vocabulary, preprocessing, shape,
+  and unknown-label metadata.
+- [x] Dataset extraction produces a training-ready manifest.
+- [x] No trained-model or accuracy claim is made without the ML runtime, data,
+  and held-out-signer evaluation evidence.
 
 ## Implementation checkpoints
 
@@ -61,60 +62,38 @@ Part 3 is being delivered as coherent pushed checkpoints on `Swayam`:
 7. `7fe2025` — document the dataset contract and verification evidence;
 8. final verification and Duck review.
 
-## Verification at the current checkpoint
+## Final verification before Duck review
 
-The focused, dependency-light ML checks pass:
+The current branch passes the implementation and contract checks:
 
 ```text
-20 passed
+52 passed, 2 skipped
 ```
 
-The ML source compiles with `python -m compileall -q src tests`, and
-`git diff --check` is clean. The full ML test suite remains environment-gated:
-the current Python environment does not have PyTorch, so model test collection
-fails with `ModuleNotFoundError: No module named 'torch'`. No training or
-accuracy result is reported from this checkout.
+The ML source compiles with `python -m compileall -q src tests scripts`, and
+`git diff --check` is clean. The two skipped tests are the PyTorch-dependent
+architecture checks; the suite now skips them explicitly when PyTorch is not
+installed instead of failing during collection. No training or accuracy result
+is reported from this checkout.
 
-Part 3 remains in progress until the final verification and Duck review are
-recorded below.
+Additional current evidence:
 
-## Final Duck review — Fixing Part 3
+- backend regression suite: **108 passed**;
+- frontend Vitest suite: **26 passed**;
+- frontend Vite production build: completed with the existing module-directive
+  and large-chunk warnings;
+- shared vocabulary freeze hashes: verified;
+- avatar coverage audit: **0 of 12** approved clips available, with all 12
+  canonical glosses reported missing;
+- working tree: clean after the completion commit.
 
-**Verdict: DUCK PASS WITH GAPS.**
+The Part 3 implementation and final verification are complete for the defined
+ML-contract and dataset-integrity scope. A real dataset, trained checkpoint,
+held-out-signer result, and avatar clips remain explicitly outside this
+contract-correction scope and are not claimed.
 
-The Part 3 foundation now has a single canonical contract from preprocessing
-through extraction, manifests, signer-wise splitting, training metadata,
-evaluation, export, and inference boundaries. Shoulder normalization uses the
-correct pose indices; temporal gaps are interpolated before fallback filling;
-labels and the `UNKNOWN` value are loaded from the shared vocabulary; malformed
-or nonfinite 60×300 sequences are rejected; duplicate source groups cannot
-cross signer or split boundaries; and unsupported or low-confidence inference
-does not become an accepted gloss.
+## Duck review — pending
 
-The extraction tool now distinguishes its source-video manifest from the
-training manifest and writes the latter only for successful sequences. Model
-metadata records the model, vocabulary, preprocessing, shape, and unknown-label
-versions. No API key, provider, credential, real dataset, trained model, or
-accuracy claim was introduced.
+The Duck review is the next required step after this completion checkpoint.
 
-Evidence for this review:
-
-- focused ML contract/preprocessing/manifest/inference/metadata tests: **20 passed**;
-- ML source and scripts: `python -m compileall -q src tests scripts` passed;
-- backend regression suite: **98 passed**;
-- frontend Vitest: **18 passed**;
-- frontend Vite build: completed with the existing React Router directive and
-  large-chunk warnings;
-- `git diff --check`: clean;
-- remote `Swayam` contains all eight Part 3 checkpoints after this review.
-
-The full ML suite remains blocked by the available environment: collecting
-`tests/test_models.py` raises `ModuleNotFoundError: No module named 'torch'`.
-There is no real dataset or trained checkpoint in this checkout, so held-out
-signer accuracy, confusion matrices, latency, model export execution, and
-browser camera-to-model behavior were not claimed. MediaPipe assets, Whisper,
-LLM/TTS, real avatar clips, and the complete end-to-end translation flows
-remain later work.
-
-**Fixing Part 3 is complete for its defined contract-correction scope. Stop
-here and wait for the user's explicit command before starting the next part.**
+**Not yet recorded.**
