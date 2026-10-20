@@ -16,10 +16,7 @@ from src.evaluation.confusion_matrix import (
     build_confusion_matrix,
     save_confusion_matrix,
 )
-from src.evaluation.metrics import (
-    accuracy,
-    top_k_accuracy,
-)
+from src.evaluation.report import build_evaluation_report
 from src.models.transformer import (
     SignTransformer,
 )
@@ -181,28 +178,15 @@ def main():
         )
     )
 
-    report = {
-        "accuracy": accuracy(
-            predictions,
-            targets,
-        ),
-        "top_3_accuracy":
-            top_k_accuracy(
-                probabilities,
-                targets,
-                k=3,
-            ),
-        "test_signers":
-            split["test_signers"],
-        "labels": labels,
-        "num_test_samples":
-            len(targets),
-        "confusion_matrix":
-            matrix.tolist(),
-        "model_version": metadata.model_version,
-        "vocabulary_version": metadata.vocabulary_version,
-        "preprocessing_version": metadata.preprocessing_version,
-    }
+    report = build_evaluation_report(
+        predictions,
+        targets,
+        probabilities,
+        labels=labels,
+        signer_ids=[row["signer_id"] for row in split["test"]],
+        test_signers=split["test_signers"],
+        metadata=metadata.as_dict(),
+    )
 
     args.output.parent.mkdir(
         parents=True,
