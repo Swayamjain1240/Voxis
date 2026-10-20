@@ -16,6 +16,7 @@ from src.datasets.splitter import (
     signer_wise_split,
 )
 from src.contracts.label_map import load_label_map
+from src.contracts.model_config import ModelConfig
 from src.contracts.model_metadata import ModelMetadata
 from src.models.transformer import (
     SignTransformer,
@@ -23,6 +24,7 @@ from src.models.transformer import (
 from src.training.trainer import (
     SignTrainer,
 )
+from src.training.class_weights import inverse_frequency_weights
 
 
 def seed_everything(
@@ -115,7 +117,8 @@ def main():
         )
 
     label_map = build_label_map(rows)
-    metadata = ModelMetadata(model_version=args.model_version)
+    model_config = ModelConfig(model_version=args.model_version).validate()
+    metadata = ModelMetadata(model_version=model_config.model_version)
 
     split = signer_wise_split(
         rows
@@ -152,10 +155,13 @@ def main():
     )
 
     model = SignTransformer(
-        input_features=300,
-        num_classes=len(
-            label_map
-        ),
+        input_features=model_config.input_features,
+        num_classes=model_config.num_classes,
+        d_model=model_config.d_model,
+        num_heads=model_config.num_heads,
+        num_layers=model_config.num_layers,
+        feedforward_dim=model_config.feedforward_dim,
+        dropout=model_config.dropout,
     )
 
     optimizer = torch.optim.AdamW(
@@ -164,7 +170,12 @@ def main():
         weight_decay=1e-4,
     )
 
+    class_weights = inverse_frequency_weights(
+        [label_map[row["label"].upper()] for row in split["train"]],
+        model_config.num_classes,
+    )
     criterion = nn.CrossEntropyLoss(
+        weight=torch.tensor(class_weights, dtype=torch.float32, device=args.device),
         label_smoothing=0.05
     )
 
@@ -216,6 +227,7 @@ def main():
 
             checkpoint = {
                 **metadata.as_dict(),
+                "model_config": model_config.as_dict(),
                 "epoch": epoch,
                 "model_state_dict":
                     model.state_dict(),
@@ -250,6 +262,7 @@ def main():
             split["test_signers"],
         "label_map": label_map,
         **metadata.as_dict(),
+        "model_config": model_config.as_dict(),
     }
 
     metadata_path = (
