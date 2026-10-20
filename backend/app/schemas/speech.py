@@ -12,6 +12,8 @@ class AudioUploadResponse(ContractModel):
         ge=0
     )
     duration_ms: int | None = None
+    quality_status: Literal["ok", "too_short", "silent", "unknown"] = "unknown"
+    quality_warning: str | None = None
     accepted: bool
 
 

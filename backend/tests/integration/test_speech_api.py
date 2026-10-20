@@ -21,6 +21,16 @@ def wav_fixture():
     return output.getvalue()
 
 
+def loud_wav_fixture(frame_count: int = 8000):
+    output = BytesIO()
+    with wave.open(output, "wb") as audio:
+        audio.setnchannels(1)
+        audio.setsampwidth(2)
+        audio.setframerate(8000)
+        audio.writeframes(b"\xff\x1f" * frame_count)
+    return output.getvalue()
+
+
 def test_speech_capabilities():
     response = client.get(
         "/api/v1/speech/capabilities"
@@ -36,7 +46,7 @@ def test_speech_capabilities():
 
 
 def test_audio_upload():
-    audio = BytesIO(wav_fixture())
+    audio = BytesIO(loud_wav_fixture())
 
     response = client.post(
         "/api/v1/speech/upload",
@@ -56,6 +66,7 @@ def test_audio_upload():
     assert data["accepted"] is True
     assert data["filename"] == "test.wav"
     assert data["size_bytes"] > 0
+    assert data["quality_status"] == "ok"
 
 
 def test_empty_audio():
@@ -71,3 +82,19 @@ def test_empty_audio():
     )
 
     assert response.status_code == 400
+
+
+def test_silent_audio_is_rejected_at_transcription_boundary():
+    response = client.post(
+        "/api/v1/speech/transcribe",
+        files={
+            "audio": (
+                "silent.wav",
+                BytesIO(wav_fixture()),
+                "audio/wav",
+            )
+        },
+    )
+
+    assert response.status_code == 400
+    assert response.json()["error"]["code"] == "INVALID_AUDIO"

@@ -1,5 +1,9 @@
 from dataclasses import dataclass
+from io import BytesIO
+import math
+import struct
 from typing import BinaryIO
+import wave
 
 from fastapi import UploadFile
 
@@ -17,9 +21,14 @@ class AudioMetadata:
     content_type: str
     size_bytes: int
     content: bytes
+    duration_ms: int | None
+    quality_status: str
+    quality_warning: str | None
 
 
 READ_CHUNK_BYTES = 64 * 1024
+MIN_TRANSCRIPTION_DURATION_MS = 250
+SILENCE_RMS_THRESHOLD = 0.005
 SUPPORTED_AUDIO_TYPES = frozenset({
     "audio/aac",
     "audio/mp4",
@@ -63,6 +72,77 @@ def _has_audio_signature(content_type: str, content: bytes) -> bool:
     return False
 
 
+def _pcm_quality(content: bytes) -> tuple[int, float, float]:
+    """Return WAV duration, normalized RMS, and peak amplitude."""
+    with wave.open(BytesIO(content), "rb") as wav:
+        frame_rate = wav.getframerate()
+        frame_count = wav.getnframes()
+        sample_width = wav.getsampwidth()
+        channels = wav.getnchannels()
+        if frame_rate <= 0 or frame_count <= 0:
+            raise InvalidAudioError("Audio does not contain usable PCM frames.")
+        if sample_width not in {1, 2, 4}:
+            raise InvalidAudioError("WAV audio uses an unsupported sample width.")
+        if channels <= 0:
+            raise InvalidAudioError("Audio does not contain a valid channel count.")
+
+        raw = wav.readframes(min(frame_count, 2_000_000))
+
+    if sample_width == 1:
+        values = [sample - 128 for sample in raw]
+        scale = 128.0
+    elif sample_width == 2:
+        values = struct.unpack(f"<{len(raw) // 2}h", raw)
+        scale = 32768.0
+    else:
+        values = struct.unpack(f"<{len(raw) // 4}i", raw)
+        scale = 2147483648.0
+
+    if not values:
+        raise InvalidAudioError("Audio does not contain usable PCM samples.")
+    normalized = [value / scale for value in values]
+    rms = math.sqrt(sum(value * value for value in normalized) / len(normalized))
+    peak = max(abs(value) for value in normalized)
+    duration_ms = round(frame_count * 1000 / frame_rate)
+    return duration_ms, rms, peak
+
+
+def analyze_audio(content_type: str, content: bytes) -> dict[str, object]:
+    """Classify quality without decoding formats the stdlib cannot inspect."""
+    if content_type not in {"audio/wav", "audio/x-wav"}:
+        return {
+            "duration_ms": None,
+            "quality_status": "unknown",
+            "quality_warning": "Duration and silence checks require a decoded audio format.",
+        }
+
+    duration_ms, rms, _peak = _pcm_quality(content)
+    if duration_ms < MIN_TRANSCRIPTION_DURATION_MS:
+        return {
+            "duration_ms": duration_ms,
+            "quality_status": "too_short",
+            "quality_warning": "Record at least a quarter second of speech.",
+        }
+    if rms <= SILENCE_RMS_THRESHOLD:
+        return {
+            "duration_ms": duration_ms,
+            "quality_status": "silent",
+            "quality_warning": "No speech-level audio was detected.",
+        }
+    return {
+        "duration_ms": duration_ms,
+        "quality_status": "ok",
+        "quality_warning": None,
+    }
+
+
+def ensure_transcribable(metadata: AudioMetadata) -> None:
+    if metadata.quality_status == "too_short":
+        raise InvalidAudioError(metadata.quality_warning or "Audio is too short to transcribe.")
+    if metadata.quality_status == "silent":
+        raise InvalidAudioError(metadata.quality_warning or "Audio contains no detectable speech.")
+
+
 async def _read_bounded(file: BinaryIO, max_bytes: int) -> bytes:
     chunks: list[bytes] = []
     total = 0
@@ -100,9 +180,14 @@ async def validate_audio_upload(
     if not _has_audio_signature(content_type, content):
         raise InvalidAudioError("Audio content does not match the declared format.")
 
+    quality = analyze_audio(content_type, content)
+
     return AudioMetadata(
         filename=filename,
         content_type=content_type,
         size_bytes=len(content),
         content=content,
+        duration_ms=quality["duration_ms"],
+        quality_status=str(quality["quality_status"]),
+        quality_warning=quality["quality_warning"],
     )

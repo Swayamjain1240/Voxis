@@ -6,6 +6,7 @@ from app.schemas.speech import (
     TranscriptionResponse,
 )
 from app.services.speech.audio_processor import (
+    ensure_transcribable,
     validate_audio_upload,
 )
 from app.services.speech.whisper_service import WhisperService
@@ -47,7 +48,9 @@ async def upload_audio(
         filename=metadata.filename,
         content_type=metadata.content_type,
         size_bytes=metadata.size_bytes,
-        duration_ms=None,
+        duration_ms=metadata.duration_ms,
+        quality_status=metadata.quality_status,
+        quality_warning=metadata.quality_warning,
         accepted=True,
     ))
 
@@ -64,6 +67,7 @@ async def transcribe(
         audio,
         max_audio_upload_mb=request.app.state.settings.max_audio_upload_mb,
     )
+    ensure_transcribable(metadata)
 
     try:
         result = await whisper_service.transcribe(
