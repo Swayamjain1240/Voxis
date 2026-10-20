@@ -1,0 +1,22 @@
+{
+  "vocabulary_version": "1.0.0",
+  "registry": null,
+  "available_count": 0,
+  "required_count": 12,
+  "supported": [],
+  "missing": [
+    "BANK",
+    "DOCTOR",
+    "HELP",
+    "MEDICINE",
+    "MONEY",
+    "NO",
+    "PAIN",
+    "PATIENT",
+    "SICK",
+    "WHERE",
+    "YES",
+    "YESTERDAY"
+  ],
+  "unexpected": []
+}

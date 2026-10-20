@@ -6,11 +6,10 @@ from pathlib import Path
 
 import torch
 
-from src.models.transformer import (
-    SignTransformer,
-)
 from src.contracts.model_metadata import validate_checkpoint_metadata
 from src.contracts.label_map import load_label_map
+from src.contracts.model_config import model_config_from_mapping
+from src.models.factory import create_model
 
 
 def main():
@@ -48,12 +47,13 @@ def main():
 
     metadata = validate_checkpoint_metadata(checkpoint)
 
-    model = SignTransformer(
-        input_features=metadata.input_features,
-        num_classes=len(
-            checkpoint["label_map"]
-        ),
+    model_config = model_config_from_mapping(
+        checkpoint.get("model_config", {
+            "model_version": metadata.model_version,
+            "num_classes": len(checkpoint["label_map"]),
+        })
     )
+    model = create_model(model_config)
 
     model.load_state_dict(
         checkpoint[

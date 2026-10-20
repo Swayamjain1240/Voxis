@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0.0",
+  "vocabulary_version": "1.0.0",
+  "status": "frozen",
+  "contracts": {
+    "vocabulary.json": "sha256:1e28e510c4b577d996b281788231d3d3d9619ca47140aed2909e0eb11e0710cf",
+    "label_map.json": "sha256:92b3ae069d3bdb3a163df3ff199dcd8d80296789666ef49aa551f05dc784eb79",
+    "contexts.json": "sha256:06eaba57a1b76600a74bd02a040116e568772a2938aa68c2208f55bc135d1c06"
+  }
+}

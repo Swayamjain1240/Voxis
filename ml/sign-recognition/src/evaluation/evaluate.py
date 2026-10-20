@@ -13,13 +13,13 @@ from src.datasets.dataset import (
 )
 from src.datasets.manifest import load_manifest as load_validated_manifest
 from src.evaluation.confusion_matrix import (
-    build_confusion_matrix,
     save_confusion_matrix,
 )
+from src.evaluation.benchmark import compare_to_baseline
 from src.evaluation.report import build_evaluation_report
-from src.models.transformer import (
-    SignTransformer,
-)
+from src.models.baseline import TemporalCentroidClassifier
+from src.contracts.model_config import model_config_from_mapping
+from src.models.factory import create_model
 from src.contracts.model_metadata import validate_checkpoint_metadata
 
 
@@ -91,6 +91,10 @@ def main():
         split["test"],
         label_map,
     )
+    train_dataset = SignSequenceDataset(
+        split["train"],
+        label_map,
+    )
 
     loader = DataLoader(
         dataset,
@@ -99,12 +103,13 @@ def main():
         num_workers=0,
     )
 
-    model = SignTransformer(
-        input_features=metadata.input_features,
-        num_classes=len(
-            label_map
-        ),
+    model_config = model_config_from_mapping(
+        checkpoint.get("model_config", {
+            "model_version": metadata.model_version,
+            "num_classes": len(label_map),
+        })
     )
+    model = create_model(model_config)
 
     model.load_state_dict(
         checkpoint[
@@ -170,14 +175,6 @@ def main():
         )
     ]
 
-    matrix = (
-        build_confusion_matrix(
-            predictions,
-            targets,
-            len(label_map),
-        )
-    )
-
     report = build_evaluation_report(
         predictions,
         targets,
@@ -187,6 +184,38 @@ def main():
         test_signers=split["test_signers"],
         metadata=metadata.as_dict(),
     )
+
+    baseline = TemporalCentroidClassifier(num_classes=len(label_map))
+    train_sequences = np.stack([
+        train_dataset._load_sequence(row["sequence_path"])
+        for row in split["train"]
+    ])
+    train_targets = [label_map[row["label"].upper()] for row in split["train"]]
+    baseline.fit(train_sequences, train_targets)
+    baseline_probabilities = baseline.predict_proba([
+        dataset._load_sequence(row["sequence_path"])
+        for row in split["test"]
+    ])
+    baseline_report = build_evaluation_report(
+        baseline.predict([
+            dataset._load_sequence(row["sequence_path"])
+            for row in split["test"]
+        ]),
+        targets,
+        baseline_probabilities,
+        labels=labels,
+        signer_ids=[row["signer_id"] for row in split["test"]],
+        test_signers=split["test_signers"],
+        metadata={
+            "model_version": "temporal-centroid-baseline",
+            "vocabulary_version": metadata.vocabulary_version,
+            "preprocessing_version": metadata.preprocessing_version,
+        },
+    )
+    report["baseline"] = baseline_report
+    report["baseline_comparison"] = compare_to_baseline(report, baseline_report)
+
+    matrix = np.asarray(report["confusion_matrix"], dtype=np.int64)
 
     args.output.parent.mkdir(
         parents=True,

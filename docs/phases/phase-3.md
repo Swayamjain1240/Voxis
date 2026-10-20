@@ -40,6 +40,7 @@ Predicted Gloss
 - [x] Metrics and calibration helpers
 - [x] Confusion matrix and structured evaluation report
 - [x] Held-out signer report contract
+- [x] Temporal-centroid baseline and strict comparison gate
 - [x] Baseline UNKNOWN/rejection logic
 - [ ] Train and measure a real checkpoint on approved data
 
@@ -150,13 +151,20 @@ Phase 3 passes when:
 - [ ] Sign model beats baseline and is tested on held-out signer(s).
 - [x] Runtime contract produces confidence scores and explicit rejection.
 - [x] Converter boundary returns only supported glosses and reports unsupported tokens.
-- [ ] Shared vocabulary is frozen for Phase 4.
-- [ ] Missing avatar data is identified.
+- [x] Shared vocabulary is frozen for Phase 4.
+- [x] Missing avatar data is identified in `ml/sign-recognition/artifacts/reports/avatar-coverage.json`.
 
 ## Current evidence and limits
 
 - Backend regression suite: 108 tests passing.
-- Focused ML contract suite: 44 tests passing; source compilation passes.
+- Focused ML contract suite: 52 tests passing, with the PyTorch-only factory test
+  skipped because the dependency is unavailable; source compilation passes.
+- The baseline comparison is wired into `src/evaluation/evaluate.py`; a real
+  evaluation report will fail the Phase 3 gate unless the trained model's
+  balanced accuracy is strictly higher than the baseline on the same test split.
+- The vocabulary freeze is verified by `shared/vocabulary/freeze.json`.
+- The current avatar audit finds zero available clips and all 12 canonical glosses
+  missing, so Phase 4 needs approved avatar assets for every listed gloss.
 - PyTorch is not installed in the current environment, so the real training and
   model-architecture tests are dependency-gated.
 - ONNX Runtime is optional and no checkpoint/ONNX artifact is committed.

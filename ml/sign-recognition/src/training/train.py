@@ -18,9 +18,7 @@ from src.datasets.splitter import (
 from src.contracts.label_map import load_label_map
 from src.contracts.model_config import ModelConfig
 from src.contracts.model_metadata import ModelMetadata
-from src.models.transformer import (
-    SignTransformer,
-)
+from src.models.factory import create_model
 from src.training.trainer import (
     SignTrainer,
 )
@@ -154,15 +152,7 @@ def main():
         ),
     )
 
-    model = SignTransformer(
-        input_features=model_config.input_features,
-        num_classes=model_config.num_classes,
-        d_model=model_config.d_model,
-        num_heads=model_config.num_heads,
-        num_layers=model_config.num_layers,
-        feedforward_dim=model_config.feedforward_dim,
-        dropout=model_config.dropout,
-    )
+    model = create_model(model_config)
 
     optimizer = torch.optim.AdamW(
         model.parameters(),
