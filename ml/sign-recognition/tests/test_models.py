@@ -1,4 +1,7 @@
-import torch
+import pytest
+
+
+torch = pytest.importorskip("torch")
 
 from src.models.transformer import (
     SignTransformer,
