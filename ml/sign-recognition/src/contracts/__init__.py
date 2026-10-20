@@ -2,6 +2,7 @@
 
 from .label_map import CanonicalLabelMap, load_label_map
 from .model_metadata import ModelMetadata, validate_checkpoint_metadata
+from .model_config import ModelConfig, model_config_from_mapping
 from .sign_input import FEATURES_PER_FRAME, SEQUENCE_LENGTH, validate_sequence
 
 __all__ = [
@@ -11,5 +12,7 @@ __all__ = [
     "load_label_map",
     "ModelMetadata",
     "validate_checkpoint_metadata",
+    "ModelConfig",
+    "model_config_from_mapping",
     "validate_sequence",
 ]

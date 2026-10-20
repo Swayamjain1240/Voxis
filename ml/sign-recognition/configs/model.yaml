@@ -1,6 +1,12 @@
 model:
+  config_version: 1.0.0
+  model_version: sign-transformer-0.1.0
+  architecture: transformer
   input_features: 300
   num_classes: 12
+  sequence_length: 60
+  vocabulary_version: 1.0.0
+  preprocessing_version: 1.0.0
 
   d_model: 256
   num_heads: 8
